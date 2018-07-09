@@ -1,0 +1,286 @@
+
+
+* Debugging our count matrix
+
+** Questions:
+*** How to map the cell given in Grün's SAM file to an actual barcode?
+These appear to be stripped from his BAM file, and I will have to go back through his scripts to see how he selects each FASTQ read
+
+*** For example:
+> J00182:75:HTKJNBBXX:2:1223:6532:42073   0       ENSDARG00000000018      2775    37      70M     *       0       0 XT:A:U  NM:i:0  X0:i:1  X1:i:0  XM:i:0  XO:i:0  XG:i:0  MD:Z:70
+
+This is a 0 flag, NM:i:0 read that maps to gene ENSDARG00000000018, and can be found in the FASTQ file:
+
+> @J00182:75:HTKJNBBXX:2:1223:6532:42073 1:N:0:ATCACG
+> GACAAGAGACAGTCTTTTTTTTTTTTTTTT
+
+UMI = GACAAG
+BAR = AGACAG
+
+Is our barcode actually in our wanted barcode list?
+- Yes -- at position 54
+
+*** How does this map to OUR star BAM file (sorted.featurecounts.bam)?
+
+> J00182:75:HTKJNBBXX:2:1223:6532:42073_AGACAG_GACAAG    16      chr4    15082775        255     70M     *       0       0    NH:i:1  HI:i:1  AS:i:68 nM:i:0  XS:Z:Assigned   XN:i:1  XT:Z:nrf1
+
+So it does appear in our BAM file, but here we say that the read is on the reverse strand (16), and a quick look at the genome browser for this genome confirms this:
+
+https://genome-euro.ucsc.edu/cgi-bin/hgTracks?db=danRer10&lastVirtModeType=default&lastVirtModeExtraState=&virtModeType=default&virtMode=0&nonVirtPosition=&position=chr4%3A15082630%2D15104941&hgsid=228594737_kAtyEl62vt2FgAj7jStalxoAAKRo
+
+
+
+** Find a gene of interest in a particular cell of interest
+*** In Grün's count file:
+**** Find a gene:
+*ENSDARG00000000018*
+**** Pick a cell:
+***** RESULTS.coutc (Looking at ENSDARG00000000018)
+80 counts in total from 8 lines all referencing the same gene:
+
+We can recapitulate these counts in the BAM file:
+ - 124 counts for gene ENSDARG00000000018:
+    - of which 101 are not reverse sequence (no 16 flag)
+        - of which 80 are within an edit distance of 2 to the reference
+
+Looking at the filtered coutc file:
+##
+## All non-zero columns for this gene with different RBARs
+##
+GENE_RBAR                 V8 V9 V46 V47 V55 V56 V72 V125
+ENSDARG00000000018_GCGGCT  0  0   0  11   0   0   0    0
+ENSDARG00000000018_CTGAGC  0  0   0   0   4   0   0    0
+ENSDARG00000000018_TGGAAT  0  1   0   0   0   0   0    0
+ENSDARG00000000018_TCGGCA  0  0   0   0   0   0  16    0
+ENSDARG00000000018_GACAAG  0  0   0   0   0  34   0    0
+ENSDARG00000000018_GTAACC  0  0   0   0   0   0   0    1
+ENSDARG00000000018_TGGTAA  0  0   1   0   0   0   0    0
+ENSDARG00000000018_CCCGAA 12  0   0   0   0   0   0    0
+
+- What does this mean?
+
+Each RBAR is a UMI. This gene has 8 unique UMIs, but it is not
+known which cell they come from. Each column must be a different
+cell and that each element which has a count more than 1 must be PCR duplicates.
+
+Here we can see that this gene has only 1 transcript in each cell.
+This might be a poor candidate for inspection.
+
+Let us try another.
+
+** Finding a suitable gene for analysis
+
+*** Take a look at this workbook here, where I have parsed the RESULTS.cout.csv file to show genes of interest where there are less than 20 counts overall and the gene has more than 1 UMI in a given cell.
+
+http://cloudarch.jumpingcrab.com:9090/notebooks/wolfdriev_2018/test_compare_matrices/Debugging_BAM.ipynb
+
+**** We have chosen *ENSDARG00000019692*:
+
+Total counts = 15
+
+            GENEID   RBAR X7 X8 X9 X15 X29 X56 X82
+ENSDARG00000019692 CGTCGA  0  0  1   0   0   0   0
+ENSDARG00000019692 AGCGTA  0  0  0   0   0   1   0
+ENSDARG00000019692 AAGCAT  0  1  0   0   0   0   0
+ENSDARG00000019692 GCAGGT  0  0  0   0   0   2   0
+ENSDARG00000019692 ATCACG  1  0  0   0   0   0   0
+ENSDARG00000019692 CGTACG  0  0  0   0   0   0   2
+ENSDARG00000019692 GCTAGA  0  0  0   0   3   0   0
+ENSDARG00000019692 ATGGGC  0  1  0   0   0   0   0
+ENSDARG00000019692 GGTAGG  0  0  0   1   0   0   0
+ENSDARG00000019692 ATGGAT  0  0  0   0   2   0   0
+
+Here we can see that cell 29 has 2 UMIs: GCTAGA ATGGAT
+
+*** Can we find these in Grün's BAM file?
+
+Answer: NO! Not easily. We essentially have to trace the read header back to the FASTQ_R1 file because that is where the barcodes are stored.
+
+*** We have to [3/3]:
+
+**** DONE Get a list of all read headers in his BAM file matching our gene of interest.
+- We have a list of 40 valid reads (no16, NM:i:012)
+
+**** DONE Match all read headers to the FASTQ_R1 file and get an Assosciated list of cell barcodes and UMIs. 
+
+**** DONE Attach these to the BAM file read headers
+
+**** See if we can recuperate the total of 15 UMIs
+Answer: 
+  * We see 3 reads matching GCTAGA, with barcode ACTCTG
+  * We see 2 reads matching ATGGAT, with barcode ACTCTG
+So:
+  * Yes! We have discovered that cell 29 has barcode ACTCTG
+
+Can we recuperate the rest?
+
+   | Cell Num | Barcode |
+   |----------+---------|
+   | X7       | GTACCA  |
+   | X8       | ACAGAC  |
+   | X9       | ACGTTG  |
+   | X15      | TGCAGA  |
+   | X29      | ACTCTG  |
+   | X56      | TGAGGA  |
+   | X82      | GACGAA  |
+ 
+~Yes, but we get two extra reads which are not counted by Grun (highlighted by ~ in grün.ENSDARG00000019692.no16.nm012.appended.sam)~
+
+Yes! and we can replicate it using our own python script:
+```extract_barcodes_in_fastq_r1.py```, specifically:
+#+BEGIN_SRC shell
+./extract_barcodes_in_fastq_r1.py grün.sam ../../../input/WD_DP_P1_1_forward.fastq ENSDARG00000019692 ../../../input/celseq_barcodes.192.txt  > test_out2
+#+END_SRC 
+
+                                 A    A    T    T    A    G    G
+                                 C    C    G    G    C    A    T
+                                 T    A    A    C    G    C    A
+                                 C    G    G    A    T    G    C
+                                 T    A    G    G    T    A    C
+                                 G    C    A    A    G    A    A
+                 GENEID    RBAR
+     ENSDARG00000019692  ATGGAT  2    0    0    0    0    0    0
+     ENSDARG00000019692  AAGCAT  0    1    0    0    0    0    0
+     ENSDARG00000019692  GCAGGT  0    0    2    0    0    0    0
+     ENSDARG00000019692  GGTAGG  0    0    0    1    0    0    0
+     ENSDARG00000019692  CGTCGA  0    0    0    0    1    0    0
+     ENSDARG00000019692  AGCGTA  0    0    1    0    0    0    0
+     ENSDARG00000019692  GCTAGA  3    0    0    0    0    0    0
+     ENSDARG00000019692  ATGGGC  0    1    0    0    0    0    0
+     ENSDARG00000019692  CGTACG  0    0    0    0    0    2    0
+     ENSDARG00000019692  ATCACG  0    0    0    0    0    0    1
+
+
+**** Okay, so we can reproduce Grün's counting and know exactly which reads come from where.
+***** Can we do this our OWN bam file now?
+
+
+**** Match our reads to that of our own BAM file
+***** DONE Generate the exact same script as ./extract_barcodes_in_fastq_r1.py for our own BAM data
+
+This is extract_barcodes_in_ourbam.py.
+
+To get this to work, we cannot just give it the gene name *ENSDARG00000019692* but must use the physical coordinates for the reference it was aligned to.
+
+In this case, this was chr16:20392245-20433166 in GRCz10/danRer10
+
+                                 A    T    A    G    A    C    T    A
+                                 G    G    C    A    C    T    G    C
+                                 T    A    C    C    C    A    G    T
+                                 G    G    A    G    A    G    T    C
+                                 T    G    G    A    T    G    G    T
+                                 C    A    A    A    G    A    A    G
+                 GENEID    RBAR
+chr16:20392245-20433166  TGTCTT  1    0    0    0    0    0    0    0
+chr16:20392245-20433166  TGTGTA  0    2    0    0    0    0    0    0
+chr16:20392245-20433166  GGGCGT  0    0    8    0    0    0    0    0
+chr16:20392245-20433166  CATTGA  0    0    0    4    0    0    0    0
+chr16:20392245-20433166  CACGTG  0    0    0    0    1    0    0    0
+chr16:20392245-20433166  AGAACT  0    0    0    0    0   12    0    0
+chr16:20392245-20433166  GAGGCG  0   10    0    0    0    0    0    0
+chr16:20392245-20433166  CAATGT  0    0    0    0    0    0    6    0
+chr16:20392245-20433166  TTAAGG  0    0    0    1    0    0    0    0
+chr16:20392245-20433166  GCGCAA  0    0    0    2    0    0    0    0
+chr16:20392245-20433166  GGTATT  0    5    0    0    0    0    0    0
+chr16:20392245-20433166  GGGTTC  0    0    0    0    0    0    6    0
+chr16:20392245-20433166  AGGTTG  0    0    0    1    0    0    0    0
+chr16:20392245-20433166  GCTAGA  0    0    0    0    0    0    0    3
+
+
+***** Let us now compare these two matrices:
+
+Umi(rows) vs Cells(cols):      Format: overlap|reads(Mine),reads(Grün)
+
+         AGTGTC   TGAGGA   ACCAGA   GACGAA   ACCATG   CTAGGA   TGGTGA   ACTCTG   ACAGAC   TGCAGA   ACGTTG   GTACCA
+TGTCTT  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0 --NONE-- --NONE-- --NONE-- --NONE--
+TGTGTA  0: 1, 0  0: 2, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0 --NONE-- --NONE-- --NONE-- --NONE--
+GGGCGT  0: 1, 0  0: 1, 0  0: 8, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0 --NONE-- --NONE-- --NONE-- --NONE--
+CATTGA  0: 1, 0  0: 1, 0  0: 1, 0  0: 4, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0 --NONE-- --NONE-- --NONE-- --NONE--
+CACGTG  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0 --NONE-- --NONE-- --NONE-- --NONE--
+AGAACT  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0:12, 0  0: 1, 0  0: 1, 0 --NONE-- --NONE-- --NONE-- --NONE--
+GAGGCG  0: 1, 0  0:10, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0 --NONE-- --NONE-- --NONE-- --NONE--
+CAATGT  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 6, 0  0: 1, 0 --NONE-- --NONE-- --NONE-- --NONE--
+TTAAGG  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0 --NONE-- --NONE-- --NONE-- --NONE--
+GCGCAA  0: 1, 0  0: 1, 0  0: 1, 0  0: 2, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0 --NONE-- --NONE-- --NONE-- --NONE--
+GGTATT  0: 1, 0  0: 5, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0 --NONE-- --NONE-- --NONE-- --NONE--
+GGGTTC  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 6, 0  0: 1, 0 --NONE-- --NONE-- --NONE-- --NONE--
+AGGTTG  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0 --NONE-- --NONE-- --NONE-- --NONE--
+GCTAGA  0: 1, 0  1: 1, 1  0: 1, 0  1: 1, 1  0: 1, 0  0: 1, 0  0: 1, 0  3: 3, 3  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1
+ATGGAT --NONE--  0: 0, 1 --NONE--  0: 0, 1 --NONE-- --NONE-- --NONE--  0: 0, 2  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1
+AAGCAT --NONE--  0: 0, 1 --NONE--  0: 0, 1 --NONE-- --NONE-- --NONE--  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1
+GCAGGT --NONE--  0: 0, 2 --NONE--  0: 0, 1 --NONE-- --NONE-- --NONE--  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1
+GGTAGG --NONE--  0: 0, 1 --NONE--  0: 0, 1 --NONE-- --NONE-- --NONE--  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1
+CGTCGA --NONE--  0: 0, 1 --NONE--  0: 0, 1 --NONE-- --NONE-- --NONE--  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1
+AGCGTA --NONE--  0: 0, 1 --NONE--  0: 0, 1 --NONE-- --NONE-- --NONE--  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1
+ATGGGC --NONE--  0: 0, 1 --NONE--  0: 0, 1 --NONE-- --NONE-- --NONE--  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1
+CGTACG --NONE--  0: 0, 1 --NONE--  0: 0, 2 --NONE-- --NONE-- --NONE--  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1
+ATCACG --NONE--  0: 0, 1 --NONE--  0: 0, 1 --NONE-- --NONE-- --NONE--  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1
+
+
+As we can see:
+  + ~1/2 of the umis in one matrix are not existent in the other.
+  + ~1/3 of the cells in grün's matrix do not appear in mine (ACAGAC, TGCAGA, ACGTTG, GTACCA)
+
+The good news is that when an UMI and a cell *are both* shared between matrices, we get perfect overlap:
+  + GCTAGA/TGAGGA = 1
+  + GCTAGA/GACGAA = 1
+  + GCTAGA/ACTCTG = 3
+
+
+***** Let us single out GCAGGT / TGAGGA :: 0:|0,2
+This means we have 2 reads from Grün that I do not have, in a cell that appears in both of our matrices.
+
+The IDs for these reads are:
+ - J00182:75:HTKJNBBXX:2:1116:19786:48403
+ - J00182:75:HTKJNBBXX:2:1202:24332:24067
+
+The full SAM string from Grün's SAM for these is:
+
+ - J00182:75:HTKJNBBXX:2:1116:19786:48403_TGAGGA_GCAGGT	0	ENSDARG00000019692	719	5	70M	*	0	0	AGTGTGTGTGTGTGTGTGTGTGTGTTTGTGTGTGTGTGTGTTTGTTTGTGTGTGTGTGTGTGTGTGTGTG	-7-7-7-7-7-A7A7J7A7FAFFJFAFFFJFJAJ<JJJFJJAJJF-7FFJJJFFFJFFAJ7FFF<J<<<-	XT:A:U	NM:i:2	X0:i:1	X1:i:59	XM:i:2	XO:i:0	XG:i:0	MD:Z:0T24G44	XA:Z:ENSDARG00000069114,+2238,70M,3;ENSDARG00000008032,+4863,70M,3;ENSDARG00000086189,+387,70M,3;ENSDARG00000036942,-1482,70M,3;ENSDARG00000068572,+5082,70M,3;ENSDARG00000056389,-7030,70M,3;ENSDARG00000033088,-1782,70M,3;ENSDARG00000068214,+1887,70M,3;ENSDARG00000055839,+1745,70M,3;ENSDARG00000086592,-358,70M,3;ENSDARG00000061634,+2295,70M,3;ENSDARG00000014592,+4749,70M,3;ENSDARG00000076141,+1170,70M,3;ENSDARG00000009257,+2541,70M,3;ENSDARG00000092499,-6159,70M,3;ENSDARG00000016256,+5762,70M,3;ENSDARG00000092455,+1433,70M,3;ENSDARG00000070804,+3746,70M,3;ENSDARG00000019765,+2165,70M,3;ENSDARG00000045909,-1188,70M,3;ENSDARG00000090669,-2177,70M,3;ENSDARG00000078042,-1499,70M,3;ENSDARG00000086260,+562,70M,3;ENSDARG00000012249,+2169,70M,3;ENSDARG00000077736,-550,70M,3;ENSDARG00000044083,+5175,70M,3;ENSDARG00000035868,-3551,70M,3;ENSDARG00000031745,+1347,70M,3;ENSDARG00000086138,-208,70M,3;ENSDARG00000091321,+1532,70M,3;ENSDARG00000076892,-4089,70M,3;ENSDARG00000076182,-3814,70M,3;ENSDARG00000086015,+696,70M,3;ENSDARG00000077177,+2062,70M,3;ENSDARG00000074796,+2256,70M,3;ENSDARG00000023160,+1198,70M,3;ENSDARG00000038995,+1692,70M,3;ENSDARG00000088340,+768,70M,3;ENSDARG00000030154,-1529,70M,3;ENSDARG00000024452,-1733,70M,3;ENSDARG00000012336,+2456,70M,3;ENSDARG00000029048,-30,70M,3;ENSDARG00000045207,+1213,70M,3;ENSDARG00000074443,+4921,70M,3;ENSDARG00000087508,-1392,70M,3;ENSDARG00000030154,-787,70M,3;ENSDARG00000063677,-1600,70M,3;ENSDARG00000060189,-890,70M,3;ENSDARG00000086735,+1527,70M,3;ENSDARG00000019208,+5331,70M,3;ENSDARG00000063677,-1604,70M,3;ENSDARG00000060189,-894,70M,3;ENSDARG00000086735,+1523,70M,3;ENSDARG00000074506,+7031,70M,3;ENSDARG00000089369,+2571,70M,3;ENSDARG00000030154,-829,70M,3;ENSDARG00000063677,-1584,70M,3;ENSDARG00000010472,+3241,70M,3;ENSDARG00000051836,+2494,70M,3;
+
+ - J00182:75:HTKJNBBXX:2:1202:24332:24067_TGAGGA_GCAGGT	0	ENSDARG00000019692	719	12	70M	*	0	0	TGTGTGTGTGTGTGTGTGTGTGTGTTTGTGTGTGTGTGTGTTTGTTTGTGTGTGTGTGTGTGTGTGTGTG	---7-7-7-7-7---A7AAJAJAJJ7FF<FFJJJFFJJJFJ-F7A-<<<A<AAFAAFA<F-AAA<FAAFA	XT:A:U	NM:i:1	X0:i:1	X1:i:14	XM:i:1	XO:i:0	XG:i:0	MD:Z:25G44	XA:Z:ENSDARG00000030154,-787,70M,2;ENSDARG00000063677,-1600,70M,2;ENSDARG00000060189,-890,70M,2;ENSDARG00000086735,+1527,70M,2;ENSDARG00000019208,+5331,70M,2;ENSDARG00000063677,-1604,70M,2;ENSDARG00000060189,-894,70M,2;ENSDARG00000086735,+1523,70M,2;ENSDARG00000074506,+7031,70M,2;ENSDARG00000089369,+2571,70M,2;ENSDARG00000030154,-829,70M,2;ENSDARG00000063677,-1584,70M,2;ENSDARG00000010472,+3241,70M,2;ENSDARG00000051836,+2494,70M,2;
+ 
+And the full SAM string for these in My SAM file is:
+
+- J00182:75:HTKJNBBXX:2:1116:19786:48403_TGAGGA_GCAGGT    16      chr4    18658135        255     69M1S   *       0       0       CACACACACACACACACACACACAAACAAACACACACACACACAAACACACACACACACACACACACACT -<<<J<FFF7JAFFJFFFJJJFF7-FJJAJJFJJJ<JAJFJFFFAFJFFAF7A7J7A7A-7-7-7-7-7-  NH:i:1  HI:i:1  AS:i:67 nM:i:0  XS:Z:Unassigned_NoFeatures
+
+- J00182:75:HTKJNBBXX:2:1202:24332:24067_TGAGGA_GCAGGT    16      chr4    18658135        255     70M     *       0       0       CACACACACACACACACACACACAAACAAACACACACACACACAAACACACACACACACACACACACACA AFAAF<AAA-F<AFAAFAA<A<<<-A7F-JFJJJFFJJJFF<FF7JJAJAJAA7A---7-7-7-7-7---  NH:i:1  HI:i:1  AS:i:68 nM:i:0  XS:Z:Unassigned_NoFeatures
+
+As we can see, my reference claims that these reads are on the reverse strand, and that they don't map to anything according to my annotation.
+
+However, if we look at position chr4:18658135 in the UCSC genome browser we see that our reads bisect two transcripts:
+https://genome-euro.ucsc.edu/cgi-bin/hgTracks?db=danRer10&lastVirtModeType=default&lastVirtModeExtraState=&virtModeType=default&virtMode=0&nonVirtPosition=&position=chr4%3A18658130%2D18658139&hgsid=228613374_oHU5zgRgphLrBjtpCBGcANCRlRux
+
+  1. bisects ) DART00000178638.1 → links to → ENSDARG00000031777.7 → range → chr4:18618085-18660341 *
+  2. bisects ) DART00000042467.4 → links to → ENSDARG00000031777.7 → range → chr4:18620684-18663699 *
+  3. not bst ) DART00000125361.3 → links to → ENSDARG00000031777.7 → range → chr4:18620563-18646029 -
+
+So our reads bisect transcripts 1+2 but not 3, of this gene (ENSDARG00000031777.7 → "pparaaa")
+
+***** Do we have this 3rd transcript in our GTF file?
+
+Well, our position is chr4:18658135, and this lies between the lines of our GTF file:
+
+- chr4    unknown exon    18645848        18646029        .       -       .       gene_id "pparaa"; gene_name "pparaa"; p_id "P10469"; transcript_id "NM_001161333"; tss_id "TSS2286";
+- chr4    unknown exon    18664172        18664265        .       -       .       gene_id "mirlet7b"; gene_name "mirlet7b"; transcript_id "NR_029982"; tss_id "TSS264";
+
+So pparaa is the gene that we want, and we can see from UCSC that our read lies upstream of it on the reverse strand.
+https://screenshots.firefox.com/JJecIoJMVhciclno/genome-euro.ucsc.edu
+
+
+***** _BUT_ Grün says that these reads map to ENSDARG00000019692
+ENSDARG00000019692 is the gene *colq*
+
+Where is colq in our GTF file? IT DOESN'T EXIST (and nor does ENSDARG00000019692).
+
+***** What does this mean though? 
+Well Colq seems to exist within the Ensembl Gene Predictions - 91 track, but not the RefSeq gene predictions track from NCBI.
+https://screenshots.firefox.com/bVT5xvM42ShK3rLh/genome-euro.ucsc.edu
+
+***** Questions:
+- Is this a good thing that our GTF file does not include predicted transcripts?
+- Why is this not a freak gene, why is there such little overlap between our genes and Grün's?
+   - What is the overlap in general between RefSeq and Ensembl?
+   - Do we get better matrices when we use an Ensembl GTF file? Does on exist?
+
+

@@ -1,0 +1,62 @@
+MINE_BAM = "inputs/sorted.featureCounts.bam"
+GRUN_SAM = "inputs/grün.sam"
+FASTQ_R1 = "inputs/WD_DP_P1_1_forward.fastq"
+BARCODES = "inputs/celseq_barcodes.192.txt"
+
+# These two should describe the same feature
+GENE_OF_INTEREST = "ENSDARG00000019692"
+LOCI_OF_INTEREST = "chr16:20392245-20433166"
+
+ANNOTATED_GRUN_SAM = "1_annotated/grün." + GENE_OF_INTEREST + ".sam"
+ANNOTATED_MY_SAM = "1_annotated/mine." + LOCI_OF_INTEREST.replace(":","_") + ".sam" 
+
+ANNOTATED_GRUN_MAT_SIMPLE = ANNOTATED_GRUN_SAM + ".matrix_simple"
+ANNOTATED_GRUN_MAT_DETAILED = ANNOTATED_GRUN_SAM + ".matrix_detailed"
+
+ANNOTATED_MY_MAT_SIMPLE = ANNOTATED_MY_SAM + ".matrix_simple"
+ANNOTATED_MY_MAT_DETAILED = ANNOTATED_MY_SAM + ".matrix_detailed"
+
+MATRIX_COMPARISON = "2_matrixcompare/compare_mine_with_gruns.mat"
+
+# Scripts
+extract_barcodes_grun="scripts/extract_barcodes_in_fastq_r1.py"
+extract_barcodes_mine="scripts/extract_barcodes_in_ourbam.py"
+matrix_compare="scripts/compare_matrices.py"
+
+
+rule all:
+    input:
+        MATRIX_COMPARISON
+        
+
+rule annotateGruenSAM_with_FastqR1_and_get_UMI_BAR_matrix:
+    input:
+        sam=GRUN_SAM,
+        fq1=FASTQ_R1
+    output:
+        sam=ANNOTATED_GRUN_SAM,
+        simple=ANNOTATED_GRUN_MAT_SIMPLE,
+        detailed=ANNOTATED_GRUN_MAT_DETAILED
+    shell:
+        "{extract_barcodes_grun} {input.sam} {input.fq1} {GENE_OF_INTEREST} {BARCODES} {output.sam}"
+
+
+rule extractMyBAM_and_get_UMI_BAR_matrix:
+    input:
+        MINE_BAM
+    output:
+        sam=ANNOTATED_MY_SAM,
+        simple=ANNOTATED_MY_MAT_SIMPLE,
+        detailed=ANNOTATED_MY_MAT_DETAILED
+    shell:
+        "{extract_barcodes_mine} {input} {LOCI_OF_INTEREST} {BARCODES} {output.sam}"
+
+
+rule compareDetailedMatrices:
+    input:
+        mine=ANNOTATED_MY_MAT_DETAILED,
+        grun=ANNOTATED_GRUN_MAT_DETAILED
+    output:
+        MATRIX_COMPARISON
+    shell:
+        "{matrix_compare} {input.mine} {input.grun} > {output}"
