@@ -17,6 +17,8 @@ Compares two umi/barcode matrices of the same gene
 mer = {} # barcode -> umi -> count or reads
 umi_order = {}
 
+EMPTY_SYM = "."
+
 def matrix2map(file, symbol):
     with open(file, 'r') as mat:
         string = ""
@@ -41,6 +43,9 @@ def matrix2map(file, symbol):
                 bar = headers[i]
                 val = vals[i]
 
+                if val == EMPTY_SYM:
+                    continue
+
                 if bar not in mer:
                     mer[bar] = {}
 
@@ -54,11 +59,11 @@ matrix2map(sys.argv[1],'M')
 matrix2map(sys.argv[2],'G')
 
 # Print matrix
-barorder = list(mer.keys())
-umiorder = list(umi_order.keys())
+barorder = sorted(list(mer.keys()))
+umiorder = sorted(list(umi_order.keys()))
 
 print("\nUmi(rows) vs Cells(cols):\n  overlap|reads(Mine),reads(Grün)\n")
-print(' ' * 7, ' '.join(["%8s" % x for x in barorder]), sep="")
+print(' ' * 7, ' '.join(["%6s" % x for x in barorder]), sep="")
 
 for umi in umiorder:
     print(umi, end="")
@@ -83,10 +88,10 @@ for umi in umiorder:
             #    print(G, file=sys.stderr)
             #    print(overlap, file=sys.stderr)
                 
-            out = "%2d:%2d,%2d" % (overlap, len(M),len(G))
+            out = "%6s" % ("%d:%d,%d" % (overlap, len(M),len(G)))
         else:
             # Umi does not appear for that barcode for one file
-            out = "--NONE--"
+            out = "  :   "
             
         print(" %s" % out, end="")
     print("")

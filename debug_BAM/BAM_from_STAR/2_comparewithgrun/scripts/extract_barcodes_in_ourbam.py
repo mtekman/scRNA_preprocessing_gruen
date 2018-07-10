@@ -42,7 +42,7 @@ for read in samfile.fetch(chrom, loc1, loc2):
     # but also sometimes not
     flag = read.flag
 
-    bad_flag = flag != 0
+    bad_flag = flag not in [0,16]   # both forward and reverse
     bad_NM = NM > 2
     bad_NH = NH > 1
 

@@ -165,7 +165,7 @@ Yes! and we can replicate it using our own python script:
 
 
 **** Okay, so we can reproduce Grün's counting and know exactly which reads come from where.
-***** Can we do this our OWN bam file now?
+***** DONE Can we do this our OWN bam file now?
 
 
 **** Match our reads to that of our own BAM file
@@ -208,7 +208,6 @@ chr16:20392245-20433166  GCTAGA  0    0    0    0    0    0    0    3
 Umi(rows) vs Cells(cols):      Format: overlap|reads(Mine),reads(Grün)
 
 #+BEGIN_SRC
-
          AGTGTC   TGAGGA   ACCAGA   GACGAA   ACCATG   CTAGGA   TGGTGA   ACTCTG   ACAGAC  TGCAGA   ACGTTG   GTACCA
 TGTCTT  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0 --NONE-- --NONE-- --NONE-- --NONE--
 TGTGTA  0: 1, 0  0: 2, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0 --NONE-- --NONE-- --NONE-- --NONE--
@@ -235,34 +234,6 @@ CGTACG --NONE--  0: 0, 1 --NONE--  0: 0, 2 --NONE-- --NONE-- --NONE--  0: 0, 1  
 ATCACG --NONE--  0: 0, 1 --NONE--  0: 0, 1 --NONE-- --NONE-- --NONE--  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 
 #+END_SRC
 
-| UMI\BARC | AGTGTC   | TGAGGA  | ACCAGA   | GACGAA  | ACCATG   | CTAGGA   | TGGTGA   | ACTCTG  | ACAGAC   | TGCAGA   | ACGTTG   | GTACCA   |
-|----------+----------+---------+----------+---------+----------+----------+----------+---------+----------+----------+----------+----------|
-| TGTCTT   | 0: 1, 0  | 0: 1, 0 | 0: 1, 0  | 0: 1, 0 | 0: 1, 0  | 0: 1, 0  | 0: 1, 0  | 0: 1, 0 | --NONE-- | --NONE-- | --NONE-- | --NONE-- |
-| TGTGTA   | 0: 1, 0  | 0: 2, 0 | 0: 1, 0  | 0: 1, 0 | 0: 1, 0  | 0: 1, 0  | 0: 1, 0  | 0: 1, 0 | --NONE-- | --NONE-- | --NONE-- | --NONE-- |
-| GGGCGT   | 0: 1, 0  | 0: 1, 0 | 0: 8, 0  | 0: 1, 0 | 0: 1, 0  | 0: 1, 0  | 0: 1, 0  | 0: 1, 0 | --NONE-- | --NONE-- | --NONE-- | --NONE-- |
-| CATTGA   | 0: 1, 0  | 0: 1, 0 | 0: 1, 0  | 0: 4, 0 | 0: 1, 0  | 0: 1, 0  | 0: 1, 0  | 0: 1, 0 | --NONE-- | --NONE-- | --NONE-- | --NONE-- |
-| CACGTG   | 0: 1, 0  | 0: 1, 0 | 0: 1, 0  | 0: 1, 0 | 0: 1, 0  | 0: 1, 0  | 0: 1, 0  | 0: 1, 0 | --NONE-- | --NONE-- | --NONE-- | --NONE-- |
-| AGAACT   | 0: 1, 0  | 0: 1, 0 | 0: 1, 0  | 0: 1, 0 | 0: 1, 0  | 0:12, 0  | 0: 1, 0  | 0: 1, 0 | --NONE-- | --NONE-- | --NONE-- | --NONE-- |
-| GAGGCG   | 0: 1, 0  | 0:10, 0 | 0: 1, 0  | 0: 1, 0 | 0: 1, 0  | 0: 1, 0  | 0: 1, 0  | 0: 1, 0 | --NONE-- | --NONE-- | --NONE-- | --NONE-- |
-| CAATGT   | 0: 1, 0  | 0: 1, 0 | 0: 1, 0  | 0: 1, 0 | 0: 1, 0  | 0: 1, 0  | 0: 6, 0  | 0: 1, 0 | --NONE-- | --NONE-- | --NONE-- | --NONE-- |
-| TTAAGG   | 0: 1, 0  | 0: 1, 0 | 0: 1, 0  | 0: 1, 0 | 0: 1, 0  | 0: 1, 0  | 0: 1, 0  | 0: 1, 0 | --NONE-- | --NONE-- | --NONE-- | --NONE-- |
-| GCGCAA   | 0: 1, 0  | 0: 1, 0 | 0: 1, 0  | 0: 2, 0 | 0: 1, 0  | 0: 1, 0  | 0: 1, 0  | 0: 1, 0 | --NONE-- | --NONE-- | --NONE-- | --NONE-- |
-| GGTATT   | 0: 1, 0  | 0: 5, 0 | 0: 1, 0  | 0: 1, 0 | 0: 1, 0  | 0: 1, 0  | 0: 1, 0  | 0: 1, 0 | --NONE-- | --NONE-- | --NONE-- | --NONE-- |
-| GGGTTC   | 0: 1, 0  | 0: 1, 0 | 0: 1, 0  | 0: 1, 0 | 0: 1, 0  | 0: 1, 0  | 0: 6, 0  | 0: 1, 0 | --NONE-- | --NONE-- | --NONE-- | --NONE-- |
-| AGGTTG   | 0: 1, 0  | 0: 1, 0 | 0: 1, 0  | 0: 1, 0 | 0: 1, 0  | 0: 1, 0  | 0: 1, 0  | 0: 1, 0 | --NONE-- | --NONE-- | --NONE-- | --NONE-- |
-| GCTAGA   | 0: 1, 0  | 1: 1, 1 | 0: 1, 0  | 1: 1, 1 | 0: 1, 0  | 0: 1, 0  | 0: 1, 0  | 3: 3, 3 | 0: 0, 1  | 0: 0, 1  | 0: 0, 1  | 0: 0, 1  |
-| ATGGAT   | --NONE-- | 0: 0, 1 | --NONE-- | 0: 0, 1 | --NONE-- | --NONE-- | --NONE-- | 0: 0, 2 | 0: 0, 1  | 0: 0, 1  | 0: 0, 1  | 0: 0, 1  |
-| AAGCAT   | --NONE-- | 0: 0, 1 | --NONE-- | 0: 0, 1 | --NONE-- | --NONE-- | --NONE-- | 0: 0, 1 | 0: 0, 1  | 0: 0, 1  | 0: 0, 1  | 0: 0, 1  |
-| GCAGGT   | --NONE-- | 0: 0, 2 | --NONE-- | 0: 0, 1 | --NONE-- | --NONE-- | --NONE-- | 0: 0, 1 | 0: 0, 1  | 0: 0, 1  | 0: 0, 1  | 0: 0, 1  |
-| GGTAGG   | --NONE-- | 0: 0, 1 | --NONE-- | 0: 0, 1 | --NONE-- | --NONE-- | --NONE-- | 0: 0, 1 | 0: 0, 1  | 0: 0, 1  | 0: 0, 1  | 0: 0, 1  |
-| CGTCGA   | --NONE-- | 0: 0, 1 | --NONE-- | 0: 0, 1 | --NONE-- | --NONE-- | --NONE-- | 0: 0, 1 | 0: 0, 1  | 0: 0, 1  | 0: 0, 1  | 0: 0, 1  |
-| AGCGTA   | --NONE-- | 0: 0, 1 | --NONE-- | 0: 0, 1 | --NONE-- | --NONE-- | --NONE-- | 0: 0, 1 | 0: 0, 1  | 0: 0, 1  | 0: 0, 1  | 0: 0, 1  |
-| ATGGGC   | --NONE-- | 0: 0, 1 | --NONE-- | 0: 0, 1 | --NONE-- | --NONE-- | --NONE-- | 0: 0, 1 | 0: 0, 1  | 0: 0, 1  | 0: 0, 1  | 0: 0, 1  |
-| CGTACG   | --NONE-- | 0: 0, 1 | --NONE-- | 0: 0, 2 | --NONE-- | --NONE-- | --NONE-- | 0: 0, 1 | 0: 0, 1  | 0: 0, 1  | 0: 0, 1  | 0: 0, 1  |
-| ATCACG   | --NONE-- | 0: 0, 1 | --NONE-- | 0: 0, 1 | --NONE-- | --NONE-- | --NONE-- | 0: 0, 1 | 0: 0, 1  | 0: 0, 1  | 0: 0, 1  | 0: 0, 1  |
-
-
-
 As we can see:
   + ~1/2 of the umis in one matrix are not existent in the other.
   + ~1/3 of the cells in grün's matrix do not appear in mine (ACAGAC, TGCAGA, ACGTTG, GTACCA)
@@ -273,8 +244,8 @@ The good news is that when an UMI and a cell *are both* shared between matrices,
   + GCTAGA/ACTCTG = 3
 
 
-***** 
-***** Let us single out GCAGGT / TGAGGA :: 0:|0,2
+***** Let us test some of Grün's reads:
+****** Let us single out GCAGGT / TGAGGA :: 0:|0,2
 This means we have 2 reads from Grün that I do not have, in a cell that appears in both of our matrices.
 
 The IDs for these reads are:
@@ -283,21 +254,17 @@ The IDs for these reads are:
 
 The full SAM string from Grün's SAM for these is:
 
-#+BEGIN_SRC BAM
+#+BEGIN_SRC 
 J00182:75:HTKJNBBXX:2:1116:19786:48403_TGAGGA_GCAGGT	0	ENSDARG00000019692	719	5	70M	*	0	0	AGTGTGTGTGTGTGTGTGTGTGTGTTTGTGTGTGTGTGTGTTTGTTTGTGTGTGTGTGTGTGTGTGTGTG	-7-7-7-7-7-A7A7J7A7FAFFJFAFFFJFJAJ<JJJFJJAJJF-7FFJJJFFFJFFAJ7FFF<J<<<-	XT:A:U	NM:i:2	X0:i:1	X1:i:59	XM:i:2	XO:i:0	XG:i:0	MD:Z:0T24G44	XA:Z:ENSDARG00000069114,+2238,70M,3;ENSDARG00000008032,+4863,70M,3;ENSDARG00000086189,+387,70M,3;ENSDARG00000036942,-1482,70M,3;ENSDARG00000068572,+5082,70M,3;ENSDARG00000056389,-7030,70M,3;ENSDARG00000033088,-1782,70M,3;ENSDARG00000068214,+1887,70M,3;ENSDARG00000055839,+1745,70M,3;ENSDARG00000086592,-358,70M,3;ENSDARG00000061634,+2295,70M,3;ENSDARG00000014592,+4749,70M,3;ENSDARG00000076141,+1170,70M,3;ENSDARG00000009257,+2541,70M,3;ENSDARG00000092499,-6159,70M,3;ENSDARG00000016256,+5762,70M,3;ENSDARG00000092455,+1433,70M,3;ENSDARG00000070804,+3746,70M,3;ENSDARG00000019765,+2165,70M,3;ENSDARG00000045909,-1188,70M,3;ENSDARG00000090669,-2177,70M,3;ENSDARG00000078042,-1499,70M,3;ENSDARG00000086260,+562,70M,3;ENSDARG00000012249,+2169,70M,3;ENSDARG00000077736,-550,70M,3;ENSDARG00000044083,+5175,70M,3;ENSDARG00000035868,-3551,70M,3;ENSDARG00000031745,+1347,70M,3;ENSDARG00000086138,-208,70M,3;ENSDARG00000091321,+1532,70M,3;ENSDARG00000076892,-4089,70M,3;ENSDARG00000076182,-3814,70M,3;ENSDARG00000086015,+696,70M,3;ENSDARG00000077177,+2062,70M,3;ENSDARG00000074796,+2256,70M,3;ENSDARG00000023160,+1198,70M,3;ENSDARG00000038995,+1692,70M,3;ENSDARG00000088340,+768,70M,3;ENSDARG00000030154,-1529,70M,3;ENSDARG00000024452,-1733,70M,3;ENSDARG00000012336,+2456,70M,3;ENSDARG00000029048,-30,70M,3;ENSDARG00000045207,+1213,70M,3;ENSDARG00000074443,+4921,70M,3;ENSDARG00000087508,-1392,70M,3;ENSDARG00000030154,-787,70M,3;ENSDARG00000063677,-1600,70M,3;ENSDARG00000060189,-890,70M,3;ENSDARG00000086735,+1527,70M,3;ENSDARG00000019208,+5331,70M,3;ENSDARG00000063677,-1604,70M,3;ENSDARG00000060189,-894,70M,3;ENSDARG00000086735,+1523,70M,3;ENSDARG00000074506,+7031,70M,3;ENSDARG00000089369,+2571,70M,3;ENSDARG00000030154,-829,70M,3;ENSDARG00000063677,-1584,70M,3;ENSDARG00000010472,+3241,70M,3;ENSDARG00000051836,+2494,70M,3;
-#+END_SRC
 
-#+BEGIN_SRC BAM
 J00182:75:HTKJNBBXX:2:1202:24332:24067_TGAGGA_GCAGGT	0	ENSDARG00000019692	719	12	70M	*	0	0	TGTGTGTGTGTGTGTGTGTGTGTGTTTGTGTGTGTGTGTGTTTGTTTGTGTGTGTGTGTGTGTGTGTGTG	---7-7-7-7-7---A7AAJAJAJJ7FF<FFJJJFFJJJFJ-F7A-<<<A<AAFAAFA<F-AAA<FAAFA	XT:A:U	NM:i:1	X0:i:1	X1:i:14	XM:i:1	XO:i:0	XG:i:0	MD:Z:25G44	XA:Z:ENSDARG00000030154,-787,70M,2;ENSDARG00000063677,-1600,70M,2;ENSDARG00000060189,-890,70M,2;ENSDARG00000086735,+1527,70M,2;ENSDARG00000019208,+5331,70M,2;ENSDARG00000063677,-1604,70M,2;ENSDARG00000060189,-894,70M,2;ENSDARG00000086735,+1523,70M,2;ENSDARG00000074506,+7031,70M,2;ENSDARG00000089369,+2571,70M,2;ENSDARG00000030154,-829,70M,2;ENSDARG00000063677,-1584,70M,2;ENSDARG00000010472,+3241,70M,2;ENSDARG00000051836,+2494,70M,2
 #+END_SRC;
  
 And the full SAM string for these in My SAM file is:
 
-#+BEGIN_SRC BAM
+#+BEGIN_SRC
 J00182:75:HTKJNBBXX:2:1116:19786:48403_TGAGGA_GCAGGT    16      chr4    18658135        255     69M1S   *       0       0       CACACACACACACACACACACACAAACAAACACACACACACACAAACACACACACACACACACACACACT -<<<J<FFF7JAFFJFFFJJJFF7-FJJAJJFJJJ<JAJFJFFFAFJFFAF7A7J7A7A-7-7-7-7-7-  NH:i:1  HI:i:1  AS:i:67 nM:i:0  XS:Z:Unassigned_NoFeatures
-#+END_SRC
 
-#+BEGIN_SRC BAM
 J00182:75:HTKJNBBXX:2:1202:24332:24067_TGAGGA_GCAGGT    16      chr4    18658135        255     70M     *       0       0       CACACACACACACACACACACACAAACAAACACACACACACACAAACACACACACACACACACACACACA AFAAF<AAA-F<AFAAFAA<A<<<-A7F-JFJJJFFJJJFF<FF7JJAJAJAA7A---7-7-7-7-7---  NH:i:1  HI:i:1  AS:i:68 nM:i:0  XS:Z:Unassigned_NoFeature
 #+END_SRC
 
@@ -312,15 +279,13 @@ https://genome-euro.ucsc.edu/cgi-bin/hgTracks?db=danRer10&lastVirtModeType=defau
 
 So our reads bisect transcripts 1+2 but not 3, of this gene (ENSDARG00000031777.7 → "pparaaa")
 
-***** Do we have this 3rd transcript in our GTF file?
+******* Do we have this 3rd transcript in our GTF file?
 
 Well, our position is chr4:18658135, and this lies between the lines of our GTF file:
 
 #+BEGIN_SRC 
 chr4    unknown exon    18645848        18646029        .       -       .       gene_id "pparaa"; gene_name "pparaa"; p_id "P10469"; transcript_id "NM_001161333"; tss_id "TSS2286";
-#+END_SRC
 
-#+BEGIN_SRC 
 chr4    unknown exon    18664172        18664265        .       -       .       gene_id "mirlet7b"; gene_name "mirlet7b"; transcript_id "NR_029982"; tss_id "TSS264";
 #+END_SRC
 
@@ -328,19 +293,404 @@ So pparaa is the gene that we want, and we can see from UCSC that our read lies 
 https://screenshots.firefox.com/JJecIoJMVhciclno/genome-euro.ucsc.edu
 
 
-***** _BUT_ Grün says that these reads map to ENSDARG00000019692
+******* _BUT_ Grün says that these reads map to ENSDARG00000019692
 ENSDARG00000019692 is the gene *colq*
 
 Where is colq in our GTF file? IT DOESN'T EXIST (and nor does ENSDARG00000019692).
 
-***** What does this mean though? 
+******* What does this mean though? 
 Well Colq seems to exist within the Ensembl Gene Predictions - 91 track, but not the RefSeq gene predictions track from NCBI.
 https://screenshots.firefox.com/bVT5xvM42ShK3rLh/genome-euro.ucsc.edu
 
-***** Questions:
+******* Questions:
 - Is this a good thing that our GTF file does not include predicted transcripts?
 - Why is this not a freak gene, why is there such little overlap between our genes and Grün's?
    - What is the overlap in general between RefSeq and Ensembl?
    - Do we get better matrices when we use an Ensembl GTF file? Does on exist?
 
+******* Let's try another group of Grün's reads
 
+
+****** Let us single out ATGGAT / ACTCTG :: 0:|0,2
+
+Completely different UMI and different cell than before
+
+The id's for these reads are:
+#+BEGIN_SRC 
+J00182:75:HTKJNBBXX:2:1106:19015:18898
+
+J00182:75:HTKJNBBXX:2:1121:21095:34846
+#+END_SRC
+
+Which in Grün's BAM file are:
+
+#+BEGIN_SRC 
+J00182:75:HTKJNBBXX:2:1106:19015:18898	0	ENSDARG00000019692	4491	37	70M	*	0	0	GCTCTGTTGACAGCCATACATGCCCACGCCATGTCACTACTACCACCATGCTTCACTGCTTAGGATCATG	<<-777AFAFJJJJJJJJJFJJJJFFJFJJJJFJJJJAJJJJJJJJJJJJJFFJJJFFF7<-AJ7-FAJJ	XT:A:U	NM:i:2	X0:i:1	X1:i:0	XM:i:2	XO:i:0	XG:i:0	MD:Z:1T3A64
+
+J00182:75:HTKJNBBXX:2:1121:21095:34846	0	ENSDARG00000019692	4491	37	70M	*	0	0	GCTCTGTTGACAGCCATACATGCCCACGCCATGTCACTACTACCACCATGCTTCACTGCTTAGGATCATG	A<<7AAFAJJJJJJJJJJJJJJJJFFJFJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ7A7-<FAFJ	XT:A:U	NM:i:2	X0:i:1	X1:i:0	XM:i:2	XO:i:0	XG:i:0	MD:Z:1T3A64
+#+END_SRC
+
+and in my BAM is:
+
+******* This read occurs multiple times!
+
+******** 256 flag
+
+#+BEGIN_SRC 
+J00182:75:HTKJNBBXX:2:1106:19015:18898_ACTCTG_ATGGAT    256     chr14   18246000        1       2S68M   *       0       0       GCTCTGTTGACAGCCATACATGCCCACGCCATGTCACTACTACCACCATGCTTCACTGCTTAGGATCATG <<-777AFAFJJJJJJJJJFJJJJFFJFJJJJFJJJJAJJJJJJJJJJJJJFFJJJFFF7<-AJ7-FAJJ  NH:i:3  HI:i:2  AS:i:64 nM:i:1  XS:Z:Unassigned_MappingQuality
+
+J00182:75:HTKJNBBXX:2:1121:21095:34846_ACTCTG_ATGGAT    256     chr14   18246000        1       2S68M   *       0       0       GCTCTGTTGACAGCCATACATGCCCACGCCATGTCACTACTACCACCATGCTTCACTGCTTAGGATCATG A<<7AAFAJJJJJJJJJJJJJJJJFFJFJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ7A7-<FAFJ  NH:i:3  HI:i:2  AS:i:64 nM:i:1  XS:Z:Unassigned_MappingQuality
+#+END_SRC
+
++----------------------------------------+-----------+-----------+-------------------------------------+
+|                                        |   Flag    |    NM     |                Feature              |
+|          Read                          +-----+-----+-----+-----+--------------------+----------------+
+|                                        |  G  |  M  |  G  |  M  |         G          |      M         |
+|----------------------------------------+-----+-----+-----+-----+--------------------+----------------+
+| J00182:75:HTKJNBBXX:2:1106:19015:18898 |   0 | 256 |   2 |   1 | ENSDARG00000019692 | chr14:18246000 |
+| J00182:75:HTKJNBBXX:2:1121:21095:34846 |   0 | 256 |   2 |   3 | ENSDARG00000019692 | chr14:18246000 |
++----------------------------------------+-----------+-----+-----+--------------------+----------------+
+
+256 means "not primary alignment" which means that the aligner produced multiple hits for read, and that this read is not the 'primary' one. So we discard it, but Grün does not. Also note that the second read has 3 mismatches from the reference in our BAM.
+
+******* Getting the other reads
+
+#+BEGIN_SRC 
+samtools view {} | grep "J00182:75:HTKJNBBXX:2:1106:19015:18898" > query.sam
+#+END_SRC
+
+Both these reads gave 3 reads each, but only 1 with a flag of 0
+#+BEGIN_SRC 
+J00182:75:HTKJNBBXX:2:1106:19015:18898_ACTCTG_ATGGAT    0       chr16   20430982        1       2S68M   *       0       0       GCTCTGTTGACAGCCATACATGCCCACGCCATGTCACTACTACCACCATGCTTCACTGCTTAGGATCATG  <<-777AFAFJJJJJJJJJFJJJJFFJFJJJJFJJJJAJJJJJJJJJJJJJFFJJJFFF7<-AJ7-FAJJ  NH:i:3  HI:i:1  AS:i:64 nM:i:1  XS:Z:Unassigned_MappingQuality
+
+J00182:75:HTKJNBBXX:2:1121:21095:34846_ACTCTG_ATGGAT    0       chr16   20430982        1       2S68M   *       0       0       GCTCTGTTGACAGCCATACATGCCCACGCCATGTCACTACTACCACCATGCTTCACTGCTTAGGATCATG  A<<7AAFAJJJJJJJJJJJJJJJJFFJFJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ7A7-<FAFJ  NH:i:3  HI:i:1  AS:i:64 nM:i:1  XS:Z:Unassigned_MappingQuality
+#+END_SRC
+
+The number of mismatches of both < 2
+
+Blatting to this region reveals that the these fall on transcript DART00000006037.8 (ENSDARG00000019692):
+https://screenshotscdn.firefoxusercontent.com/images/7db5bf5f-8f8d-4b80-8f70-91fef67db8e2.png
+
+But only on the Ensembl Gene Predictions v 91, and not in our RefSeq genes.
+
+****** Verdict:
+- It seems that we are missing a few Ensembl Gene Predicted tracks, so we need to find a GTF file that contains these transcripts.
+
+****** Getting a decent GTF file:
+If we look at the README at ftp://ftp.ensembl.org/pub/release-91/gtf/danio_rerio/ we are told that the *abinitio* contains Gene predictions, but looking through this file for chr16:20392245-20433166, we don't see any tracks.
+
+******* GTF
+- General
+  (We see it!)
+#+BEGIN_SRC 
+16      ensembl_havana  transcript      20392245        20433166        .       +       .       gene_id "ENSDARG00000019692"; gene_version "10"; transcript_id "ENSDART00000006037";
+#+END_SRC
+
+******* GFF
+We also see it in the GFF file
+ - Abinitio:
+   
+#+BEGIN_SRC 
+16      ensembl exon    20382221        20382407        .       +       .       Parent=transcript:35358;Name=269373;exon_id=269373;version=1
+<--- An entire gene should be here! -->
+16      ensembl exon    20402859        20402984        .       +       .       Parent=transcript:35358;Name=269374;exon_id=269374;version=1
+#+END_SRC
+
+ - Regular:
+
+(We see it!)
+#+BEGIN_SRC 
+16      ensembl_havana  gene    20392245        20433166        .       +       .       ID=gene:ENSDARG00000019692;Name=colq;biotype=protein_coding;
+#+END_SRC
+
+******* Question:
+******** Do we use the 'gene' or do we use the 'exons' to perform our counting?
+
+
+****** So the DR GTF *is* decent, but for one reason or another, our read is simply not mapped to that gene
+So do we have reads that DO map to that gene?
+- No. Why? Because the GTF file that we have and the one used for the mapping are not the same, and the GTF file used by Galaxy does NOT have our gene of interest.
+  I used a GTF file which had a chr prefix, but did not contain all genes. I will do this now manually... sigh
+
+* Generating a new GTF file with chr
+
+#+BEGIN_SRC 
+zcat Danio_rerio.GRCz10.91.gtf.gz | sed -r 's/(^[^#]+)/chr\1/' > Danio_rerio.GRCz10.91.wChr.gtf
+#+END_SRC
+
+Let's re-run our files with this GTF file.
+
+- I get the EXACT same counts. How!? Where is this gene going!?
+   - Grün filters out genes on the reverse strand, since his reference is a bunch of transcripts all flipped to be in the same direction
+   - I should count reads on the forward AND reverse strand, since I could have genes that map to a gene on the reverse strand
+
+** Counting reads on Forward and Reverse:
+
+#+BEGIN_SRC 
+         ATGTCG   AGTGTC   CTAGGA   TGAGGA   ACTCTG   ACCAGA   TGCAAC   GACGAA   GTGACA   ACCATG   AAGCCA   TGGTGA   GGTAAC   AGCTTC   AGACAG   ACAGAC   TGCAGA   ACGTTG   GTACCA
+TCCAAG  0: 4, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+TGTCTT  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+ATTCTG  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+CTGACG  0: 1, 0  0: 1, 0  0: 1, 0  0: 5, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+GTGACG  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+TGTGTA  0: 1, 0  0: 1, 0  0: 1, 0  0: 2, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+GGGCGT  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 8, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+ACTGTT  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+CATTGA  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 4, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+AAGGCC  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+TCCTTT  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 2, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+CACGTG  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+GGGGTT  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 6, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+TGAGGT  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 2, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+AGAACT  0: 1, 0  0: 1, 0  0:12, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+GAGGCG  0: 1, 0  0: 1, 0  0: 1, 0  0:10, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+CAATGT  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 6, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+GCCGAG  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+CGGCGT  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+TTAAGG  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+GCGCAA  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 2, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+CCGTCA  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 2, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+GGTATT  0: 1, 0  0: 1, 0  0: 1, 0  0: 5, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+GGGTTC  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 6, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+GGAAGA  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 2, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+GTCCCA  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 4, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+AGGTTG  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+AAGCAG  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+GCTAGA  0: 1, 0  0: 1, 0  0: 1, 0  1: 1, 1  3: 3, 3  0: 1, 0  0: 1, 0  1: 1, 1  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1
+ATCGGG  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 7, 0   : NONE   : NONE   : NONE   : NONE
+CTCGGC  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 7, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0  0: 1, 0   : NONE   : NONE   : NONE   : NONE
+ATGGAT   : NONE   : NONE   : NONE  0: 0, 1  0: 0, 2   : NONE   : NONE  0: 0, 1   : NONE   : NONE   : NONE   : NONE   : NONE   : NONE   : NONE  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1
+AAGCAT   : NONE   : NONE   : NONE  0: 0, 1  0: 0, 1   : NONE   : NONE  0: 0, 1   : NONE   : NONE   : NONE   : NONE   : NONE   : NONE   : NONE  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1
+GCAGGT   : NONE   : NONE   : NONE  0: 0, 2  0: 0, 1   : NONE   : NONE  0: 0, 1   : NONE   : NONE   : NONE   : NONE   : NONE   : NONE   : NONE  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1
+GGTAGG   : NONE   : NONE   : NONE  0: 0, 1  0: 0, 1   : NONE   : NONE  0: 0, 1   : NONE   : NONE   : NONE   : NONE   : NONE   : NONE   : NONE  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1
+CGTCGA   : NONE   : NONE   : NONE  0: 0, 1  0: 0, 1   : NONE   : NONE  0: 0, 1   : NONE   : NONE   : NONE   : NONE   : NONE   : NONE   : NONE  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1
+AGCGTA   : NONE   : NONE   : NONE  0: 0, 1  0: 0, 1   : NONE   : NONE  0: 0, 1   : NONE   : NONE   : NONE   : NONE   : NONE   : NONE   : NONE  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1
+ATGGGC   : NONE   : NONE   : NONE  0: 0, 1  0: 0, 1   : NONE   : NONE  0: 0, 1   : NONE   : NONE   : NONE   : NONE   : NONE   : NONE   : NONE  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1
+CGTACG   : NONE   : NONE   : NONE  0: 0, 1  0: 0, 1   : NONE   : NONE  0: 0, 2   : NONE   : NONE   : NONE   : NONE   : NONE   : NONE   : NONE  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1
+ATCACG   : NONE   : NONE   : NONE  0: 0, 1  0: 0, 1   : NONE   : NONE  0: 0, 1   : NONE   : NONE   : NONE   : NONE   : NONE   : NONE   : NONE  0: 0, 1  0: 0, 1  0: 0, 1  0: 0, 1
+#+END_SRC
+ 
+
+Wow, so now we are getting:
+ 1. Far more UMIs detected for the gene (meaning more total counts for that gene in these cells)
+ 2. 1 or 2 counts more where Grün sees no counts in a given cell.
+ 3. Of the cells I do not detect and grün does, there is only 1 of his reads mapped there
+ 3. 9 UMIs where Grün detects reads, but I do not. What is happening here?
+
+*** Exploring GCAGGT \ TGAGGA (0: 0, 2)
+A shared cell, but with UMIs I don't see at all in any cells
+
+These are reads
+#+BEGIN_SRC 
+J00182:75:HTKJNBBXX:2:1116:19786:48403
+J00182:75:HTKJNBBXX:2:1202:24332:24067
+#+END_SRC
+
+Which in Grün's SAM look like this:
+
+#+BEGIN_SRC 
+J00182:75:HTKJNBBXX:2:1116:19786:48403_TGAGGA_GCAGGT	0	ENSDARG00000019692	719	5	70M	*	0	0	AGTGTGTGTGTGTGTGTGTGTGTGTTTGTGTGTGTGTGTGTTTGTTTGTGTGTGTGTGTGTGTGTGTGTG	-7-7-7-7-7-A7A7J7A7FAFFJFAFFFJFJAJ<JJJFJJAJJF-7FFJJJFFFJFFAJ7FFF<J<<<-	XT:A:U	NM:i:2	X0:i:1	X1:i:59	XM:i:2	XO:i:0	XG:i:0	MD:Z:0T24G44	XA:Z:ENSDARG00000069114,+2238,70M,3;ENSDARG00000008032,+4863,70M,3;ENSDARG00000086189,+387,70M,3;ENSDARG00000036942,-1482,70M,3;ENSDARG00000068572,+5082,70M,3;ENSDARG00000056389,-7030,70M,3;ENSDARG00000033088,-1782,70M,3;ENSDARG00000068214,+1887,70M,3;ENSDARG00000055839,+1745,70M,3;ENSDARG00000086592,-358,70M,3;ENSDARG00000061634,+2295,70M,3;ENSDARG00000014592,+4749,70M,3;ENSDARG00000076141,+1170,70M,3;ENSDARG00000009257,+2541,70M,3;ENSDARG00000092499,-6159,70M,3;ENSDARG00000016256,+5762,70M,3;ENSDARG00000092455,+1433,70M,3;ENSDARG00000070804,+3746,70M,3;ENSDARG00000019765,+2165,70M,3;ENSDARG00000045909,-1188,70M,3;ENSDARG00000090669,-2177,70M,3;ENSDARG00000078042,-1499,70M,3;ENSDARG00000086260,+562,70M,3;ENSDARG00000012249,+2169,70M,3;ENSDARG00000077736,-550,70M,3;ENSDARG00000044083,+5175,70M,3;ENSDARG00000035868,-3551,70M,3;ENSDARG00000031745,+1347,70M,3;ENSDARG00000086138,-208,70M,3;ENSDARG00000091321,+1532,70M,3;ENSDARG00000076892,-4089,70M,3;ENSDARG00000076182,-3814,70M,3;ENSDARG00000086015,+696,70M,3;ENSDARG00000077177,+2062,70M,3;ENSDARG00000074796,+2256,70M,3;ENSDARG00000023160,+1198,70M,3;ENSDARG00000038995,+1692,70M,3;ENSDARG00000088340,+768,70M,3;ENSDARG00000030154,-1529,70M,3;ENSDARG00000024452,-1733,70M,3;ENSDARG00000012336,+2456,70M,3;ENSDARG00000029048,-30,70M,3;ENSDARG00000045207,+1213,70M,3;ENSDARG00000074443,+4921,70M,3;ENSDARG00000087508,-1392,70M,3;ENSDARG00000030154,-787,70M,3;ENSDARG00000063677,-1600,70M,3;ENSDARG00000060189,-890,70M,3;ENSDARG00000086735,+1527,70M,3;ENSDARG00000019208,+5331,70M,3;ENSDARG00000063677,-1604,70M,3;ENSDARG00000060189,-894,70M,3;ENSDARG00000086735,+1523,70M,3;ENSDARG00000074506,+7031,70M,3;ENSDARG00000089369,+2571,70M,3;ENSDARG00000030154,-829,70M,3;ENSDARG00000063677,-1584,70M,3;ENSDARG00000010472,+3241,70M,3;ENSDARG00000051836,+2494,70M,3;
+
+J00182:75:HTKJNBBXX:2:1202:24332:24067_TGAGGA_GCAGGT	0	ENSDARG00000019692	719	12	70M	*	0	0	TGTGTGTGTGTGTGTGTGTGTGTGTTTGTGTGTGTGTGTGTTTGTTTGTGTGTGTGTGTGTGTGTGTGTG	---7-7-7-7-7---A7AAJAJAJJ7FF<FFJJJFFJJJFJ-F7A-<<<A<AAFAAFA<F-AAA<FAAFA	XT:A:U	NM:i:1	X0:i:1	X1:i:14	XM:i:1	XO:i:0	XG:i:0	MD:Z:25G44	XA:Z:ENSDARG00000030154,-787,70M,2;ENSDARG00000063677,-1600,70M,2;ENSDARG00000060189,-890,70M,2;ENSDARG00000086735,+1527,70M,2;ENSDARG00000019208,+5331,70M,2;ENSDARG00000063677,-1604,70M,2;ENSDARG00000060189,-894,70M,2;ENSDARG00000086735,+1523,70M,2;ENSDARG00000074506,+7031,70M,2;ENSDARG00000089369,+2571,70M,2;ENSDARG00000030154,-829,70M,2;ENSDARG00000063677,-1584,70M,2;ENSDARG00000010472,+3241,70M,2;ENSDARG00000051836,+2494,70M,2;
+#+END_SRC
+
+And in my BAM file look like
+
+#+BEGIN_SRC 
+J00182:75:HTKJNBBXX:2:1116:19786:48403_TGAGGA_GCAGGT    16      chr4    18658135        255     69M1S   *       0       0       CACACACACACACACACACACACAAACAAACACACACACACACAAACACACACACACACACACACACACT  -<<<J<FFF7JAFFJFFFJJJFF7-FJJAJJFJJJ<JAJFJFFFAFJFFAF7A7J7A7A-7-7-7-7-7-  NH:i:1  HI:i:1  AS:i:67 nM:i:0  XS:Z:Unassigned_NoFeatures
+
+J00182:75:HTKJNBBXX:2:1202:24332:24067_TGAGGA_GCAGGT    16      chr4    18658135        255     70M     *       0       0       CACACACACACACACACACACACAAACAAACACACACACACACAAACACACACACACACACACACACACA AFAAF<AAA-F<AFAAFAA<A<<<-A7F-JFJJJFFJJJFF<FF7JJAJAJAA7A---7-7-7-7-7---  NH:i:1  HI:i:1  AS:i:68 nM:i:0  XS:Z:Unassigned_NoFeatures
+#+END_SRC
+
+Indeed, we can see that this is a highly repetitive region and should not map anywhere.
+
+**** Verdict ::: ours is correct
+
+*** Exploring GCTAGA \ TGCAGA (0: 0, 1)
+
+(Had to fix compare_matrices.py due to it giving a false reading "." symbols)
+
+** Counting reads on Forward and Reverse (fixed):
+
+#+BEGIN_SRC
+overlap:M,G
+
+       AAGCCA ACAGAC ACCAGA ACCATG ACGTTG ACTCTG AGACAG AGCTTC AGTGTC ATGTCG CTAGGA GACGAA GGTAAC GTACCA GTGACA TGAGGA TGCAAC TGCAGA TGGTGA
+AAGCAG   :      :      :      :      :      :      :     0:1,0   :      :      :      :      :      :      :      :      :      :      :   
+AAGCAT   :     0:0,1   :      :      :      :      :      :      :      :      :      :      :      :      :      :      :      :      :   
+AAGGCC   :      :      :      :      :      :      :      :      :      :      :      :      :      :      :     0:1,0   :      :      :   
+ACTGTT   :      :      :      :      :      :      :      :      :      :      :      :      :      :      :      :     0:1,0   :      :   
+AGAACT   :      :      :      :      :      :      :      :      :      :    0:12,0   :      :      :      :      :      :      :      :   
+AGCGTA   :      :      :      :      :      :      :      :      :      :      :      :      :      :      :     0:0,1   :      :      :   
+AGGTTG   :      :      :      :      :      :      :      :      :      :      :     0:1,0   :      :      :      :      :      :      :   
+ATCACG   :      :      :      :      :      :      :      :      :      :      :      :      :     0:0,1   :      :      :      :      :   
+ATCGGG   :      :      :      :      :      :     0:7,0   :      :      :      :      :      :      :      :      :      :      :      :   
+ATGGAT   :      :      :      :      :     0:0,2   :      :      :      :      :      :      :      :      :      :      :      :      :   
+ATGGGC   :     0:0,1   :      :      :      :      :      :      :      :      :      :      :      :      :      :      :      :      :   
+ATTCTG   :      :      :      :      :      :      :      :      :      :     0:1,0   :      :      :      :      :      :      :      :   
+CAATGT   :      :      :      :      :      :      :      :      :      :      :      :      :      :      :      :      :      :     0:6,0
+CACGTG   :      :      :     0:1,0   :      :      :      :      :      :      :      :      :      :      :      :      :      :      :   
+CATTGA   :      :      :      :      :      :      :      :      :      :      :     0:4,0   :      :      :      :      :      :      :   
+CCGTCA   :      :      :      :      :     0:2,0   :      :      :      :      :      :      :      :      :      :      :      :      :   
+CGGCGT   :      :      :      :      :      :      :      :      :      :      :      :     0:1,0   :      :      :      :      :      :   
+CGTACG   :      :      :      :      :      :      :      :      :      :      :     0:0,2   :      :      :      :      :      :      :   
+CGTCGA   :      :      :      :     0:0,1   :      :      :      :      :      :      :      :      :      :      :      :      :      :   
+CTCGGC   :      :     0:7,0   :      :      :      :      :      :      :      :      :      :      :      :      :      :      :      :   
+CTGACG   :      :      :      :      :      :      :      :      :      :      :      :      :      :      :     0:5,0   :      :      :   
+GAGGCG   :      :      :      :      :      :      :      :      :      :      :      :      :      :      :    0:10,0   :      :      :   
+GCAGGT   :      :      :      :      :      :      :      :      :      :      :      :      :      :      :     0:0,2   :      :      :   
+GCCGAG   :      :      :      :      :      :      :      :      :     0:1,0   :      :      :      :      :      :      :      :      :   
+GCGCAA   :      :      :      :      :      :      :      :      :      :      :     0:2,0   :      :      :      :      :      :      :   
+GCTAGA   :      :      :      :      :     3:3,3   :      :      :      :      :      :      :      :      :      :      :      :      :   
+GGAAGA   :      :     0:2,0   :      :      :      :      :      :      :      :      :      :      :      :      :      :      :      :   
+GGGCGT   :      :     0:8,0   :      :      :      :      :      :      :      :      :      :      :      :      :      :      :      :   
+GGGGTT   :      :     0:6,0   :      :      :      :      :      :      :      :      :      :      :      :      :      :      :      :   
+GGGTTC   :      :      :      :      :      :      :      :      :      :      :      :      :      :      :      :      :      :     0:6,0
+GGTAGG   :      :      :      :      :      :      :      :      :      :      :      :      :      :      :      :      :     0:0,1   :   
+GGTATT   :      :      :      :      :      :      :      :      :      :      :      :      :      :      :     0:5,0   :      :      :   
+GTCCCA   :      :      :      :      :      :      :      :      :      :      :      :     0:4,0   :      :      :      :      :      :   
+GTGACG   :      :      :      :      :     0:1,0   :      :      :      :      :      :      :      :      :      :      :      :      :   
+TCCAAG   :      :      :      :      :      :      :      :      :     0:4,0   :      :      :      :      :      :      :      :      :   
+TCCTTT   :      :      :      :      :      :      :      :      :      :      :      :      :      :     0:2,0   :      :      :      :   
+TGAGGT  0:2,0   :      :      :      :      :      :      :      :      :      :      :      :      :      :      :      :      :      :   
+TGTCTT   :      :      :      :      :      :      :      :     0:1,0   :      :      :      :      :      :     0:1,0   :      :      :   
+TGTGTA   :      :      :      :      :      :      :      :      :      :      :      :      :      :      :     0:2,0   :      :      :   
+TTAAGG   :      :      :      :      :      :      :      :      :      :      :     0:1,0   :      :      :      :      :      :      :   
+#+END_SRC
+
+*** Reads that Grün has that I don't:
+
+***** AAGCAT:ACAGAC (1) :: Mapped to a different region (repetitive)
+#+BEGIN_SRC Grun AAGCAT:ACAGAC
+J00182:75:HTKJNBBXX:2:2217:30127:46944_ACAGAC_AAGCAT	0	ENSDARG00000019692	718	15	70M	*	0	0	GTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTTTGTTTGTGTGTGTGTGTGTGTGTGTGT	A<AAFJJJJFJFJJJJJFJFJJJJJF7AFFF<7F-<FJJ<JJ--<F-A-F-FJJ-F7JJJFJJ7A-A<F<	XT:A:U	NM:i:0	X0:i:1	X1:i:7	XM:i:0	XO:i:0	XG:i:0	MD:Z:70	XA:Z:ENSDARG00000063677,-1601,70M,1;ENSDARG00000060189,-891,70M,1;ENSDARG00000086735,+1526,70M,1;ENSDARG00000019208,+5330,70M,1;ENSDARG00000063677,-1605,70M,1;ENSDARG00000060189,-895,70M,1;ENSDARG00000086735,+1522,70M,1;
+#+END_SRC
+
+#+BEGIN_SRC Mine AAGCAT:ACAGAC
+#+END_SRC
+
+
+***** ATGGGC:ACAGAC (1) :: Mapped to a different region (repetitive)
+#+BEGIN_SRC Grun ATGGGC:ACAGAC
+J00182:75:HTKJNBBXX:2:2107:21887:39488_ACAGAC_ATGGGC	0	ENSDARG00000019692	716	14	70M	*	0	0	GTGTGTGTGTGTGTGTGTGTTTGTGTGTGTGTGTGTGTGTGTGTTTGTTTGTGTGTGTGTGTGTGTGTGT	A<AAFJJFJFJJJJJJJJJJJJJJJAJJJJJFJJJJJJJJJJJA-AFJ-FFJJJJJJ7FJJJJFFJJAJF	XT:A:U	NM:i:1	X0:i:1	X1:i:8	XM:i:1	XO:i:0	XG:i:0	MD:Z:20G49	XA:Z:ENSDARG00000063677,-1603,70M,2;ENSDARG00000060189,-893,70M,2;ENSDARG00000086735,+1524,70M,2;ENSDARG00000063677,-1607,70M,2;ENSDARG00000060189,-897,70M,2;ENSDARG00000086735,+1520,70M,2;ENSDARG00000010472,+3246,70M,2;ENSDARG00000051836,+2499,70M,2;
+#+END_SRC
+
+#+BEGIN_SRC Mine ATGGGC:ACAGAC
+#+END_SRC
+
+
+***** ATGGAT:ACTCTG (2) :: Multi-mapped so we ignore them (although they are the first indexed (not neccesarily the "best"))
+#+BEGIN_SRC Grun ATGGAT:ACTCTG
+nJ00182:75:HTKJNBBXX:2:1209:2717:21219_ACTCTG_ATGGAT	0	ENSDARG00000019692	4517	37	53M1I16M	*	0	0	CGCCATGTCACTACTACCACCATGCTTCACTGCTTAGGATCATGAGCAGTTCCTTTCCTTCTCCGTACTC	A<7<FFFJJ7JJJJJ<JJ7AJ<7AJFFJFJJJJJJJFJ7JJ<JJFJJAJ-A7A7FJF<AFFAAJ7-7FJJ	XT:A:U	NM:i:3	X0:i:1	X1:i:0	XM:i:2	XO:i:1	XG:i:1	MD:Z:63A4T0
+
+J00182:75:HTKJNBBXX:2:1106:19015:18898_ACTCTG_ATGGAT	0	ENSDARG00000019692	4491	37	70M	*	0	0	GCTCTGTTGACAGCCATACATGCCCACGCCATGTCACTACTACCACCATGCTTCACTGCTTAGGATCATG	<<-777AFAFJJJJJJJJJFJJJJFFJFJJJJFJJJJAJJJJJJJJJJJJJFFJJJFFF7<-AJ7-FAJJ	XT:A:U	NM:i:2	X0:i:1	X1:i:0	XM:i:2	XO:i:0	XG:i:0	MD:Z:1T3A64
+
+J00182:75:HTKJNBBXX:2:1121:21095:34846_ACTCTG_ATGGAT	0	ENSDARG00000019692	4491	37	70M	*	0	0	GCTCTGTTGACAGCCATACATGCCCACGCCATGTCACTACTACCACCATGCTTCACTGCTTAGGATCATG	A<<7AAFAJJJJJJJJJJJJJJJJFFJFJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ7A7-<FAFJ	XT:A:U	NM:i:2	X0:i:1	X1:i:0	XM:i:2	XO:i:0	XG:i:0	MD:Z:1T3A64
+
+nJ00182:75:HTKJNBBXX:2:1209:2798:20515_ACTCTG_ATGGAT	0	ENSDARG00000019692	4517	37	53M1I16M	*	0	0	CGCCATGTCACTACTACCACCATGCTTCACTGCTTAGGATCATGAGCAGTTCCTTTCCTTCTCCGTACTC	A<77FF<A7FJJJJJ7FJJJJJJJJJJJJJJFJJJ<JJAJFJJJAFJ<FJJJJJFJJFJAFFJJJJ<FFF	XT:A:U	NM:i:3	X0:i:1	X1:i:0	XM:i:2	XO:i:1	XG:i:1	MD:Z:63A4T0
+
+nJ00182:75:HTKJNBBXX:2:1222:27265:5903_ACTCTG_ATGGAT	0	ENSDARG00000019692	4490	37	70M	*	0	0	GTTTCTGTTGACAGCCATACATGCCCACGCCATGTCACTACTACCACCATGCTTCACTGCTTAGGATCAT	<--7777<<AJJJJJJFJJJFJJJFJAJJJJFFJJJJJJJJJJJJJJJJJJJJFFJJJJJJFFFAJAJFJ	XT:A:U	NM:i:3	X0:i:1	X1:i:0	XM:i:3	XO:i:0	XG:i:0	MD:Z:0A0G4A63
+#+END_SRC
+NM > 2 for 1st, 4th, and 5th read. 
+
+
+#+BEGIN_SRC Mine ATGGAT:ACTCTG
+hJ00182:75:HTKJNBBXX:2:1222:27265:5903_ACTCTG_ATGGAT	0	chr16	20430981	1	2S68M	*	0	0	GTTTCTGTTGACAGCCATACATGCCCACGCCATGTCACTACTACCACCATGCTTCACTGCTTAGGATCAT	<--7777<<AJJJJJJFJJJFJJJFJAJJJJFFJJJJJJJJJJJJJJJJJJJJFFJJJJJJFFFAJAJFJ	NH:i:3	HI:i:1	AS:i:64	nM:i:1	XS:Z:Unassigned_MultiMapping
+
+hJ00182:75:HTKJNBBXX:2:1106:19015:18898_ACTCTG_ATGGAT	0	chr16	20430982	1	2S68M	*	0	0	GCTCTGTTGACAGCCATACATGCCCACGCCATGTCACTACTACCACCATGCTTCACTGCTTAGGATCATG	<<-777AFAFJJJJJJJJJFJJJJFFJFJJJJFJJJJAJJJJJJJJJJJJJFFJJJFFF7<-AJ7-FAJJ	NH:i:3	HI:i:1	AS:i:64	nM:i:1	XS:Z:Unassigned_MultiMapping
+
+hJ00182:75:HTKJNBBXX:2:1121:21095:34846_ACTCTG_ATGGAT	0	chr16	20430982	1	2S68M	*	0	0	GCTCTGTTGACAGCCATACATGCCCACGCCATGTCACTACTACCACCATGCTTCACTGCTTAGGATCATG	A<<7AAFAJJJJJJJJJJJJJJJJFFJFJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ7A7-<FAFJ	NH:i:3	HI:i:1	AS:i:64	nM:i:1	XS:Z:Unassigned_MultiMapping
+#+END_SRC
+The two valid reads from Grün's appear here, but they are multiply mapped, so we ignore them
+
+
+***** AGCGTA:TGAGGA (1) :: Mapped to a different region (repetitive)
+#+BEGIN_SRC Grun AGCGTA:TGAGGA
+J00182:75:HTKJNBBXX:2:1117:22019:26986_TGAGGA_AGCGTA	0	ENSDARG00000019692	710	12	70M	*	0	0	GTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGGTTGTTTGTGGGTGTGTGTGT	A-<-AAFJAAFJJJFFJJJFFJJAF-F--FAJJJJJJAF--FJ7F<<<F7---7-7<---------7AA7	XT:A:U	NM:i:2	X0:i:1	X1:i:13	XM:i:2	XO:i:0	XG:i:0	MD:Z:49T9T10	XA:Z:ENSDARG00000058327,+1734,70M,3;ENSDARG00000063677,-1613,70M,3;ENSDARG00000060189,-903,70M,3;ENSDARG00000030154,-858,70M,3;ENSDARG00000086735,+1514,70M,3;ENSDARG00000077736,-531,70M,3;ENSDARG00000058327,+1724,70M,3;ENSDARG00000006786,+1542,70M,3;ENSDARG00000063677,-1609,70M,3;ENSDARG00000060189,-899,70M,3;ENSDARG00000030154,-854,70M,3;ENSDARG00000086735,+1518,70M,3;ENSDARG00000077736,-527,70M,3;
+#+END_SRC
+
+#+BEGIN_SRC Mine AGCGTA:TGAGGA
+#+END_SRC
+
+
+***** GCAGGT:TGAGGA (2) :: Mapped to a different region (repetitive)
+#+BEGIN_SRC Grun GCAGGT:TGAGGA
+J00182:75:HTKJNBBXX:2:1116:19786:48403_TGAGGA_GCAGGT	0	ENSDARG00000019692	719	5	70M	*	0	0	AGTGTGTGTGTGTGTGTGTGTGTGTTTGTGTGTGTGTGTGTTTGTTTGTGTGTGTGTGTGTGTGTGTGTG	-7-7-7-7-7-A7A7J7A7FAFFJFAFFFJFJAJ<JJJFJJAJJF-7FFJJJFFFJFFAJ7FFF<J<<<-	XT:A:U	NM:i:2	X0:i:1	X1:i:59	XM:i:2	XO:i:0	XG:i:0	MD:Z:0T24G44	XA:Z:ENSDARG00000069114,+2238,70M,3;ENSDARG00000008032,+4863,70M,3;ENSDARG00000086189,+387,70M,3;ENSDARG00000036942,-1482,70M,3;ENSDARG00000068572,+5082,70M,3;ENSDARG00000056389,-7030,70M,3;ENSDARG00000033088,-1782,70M,3;ENSDARG00000068214,+1887,70M,3;ENSDARG00000055839,+1745,70M,3;ENSDARG00000086592,-358,70M,3;ENSDARG00000061634,+2295,70M,3;ENSDARG00000014592,+4749,70M,3;ENSDARG00000076141,+1170,70M,3;ENSDARG00000009257,+2541,70M,3;ENSDARG00000092499,-6159,70M,3;ENSDARG00000016256,+5762,70M,3;ENSDARG00000092455,+1433,70M,3;ENSDARG00000070804,+3746,70M,3;ENSDARG00000019765,+2165,70M,3;ENSDARG00000045909,-1188,70M,3;ENSDARG00000090669,-2177,70M,3;ENSDARG00000078042,-1499,70M,3;ENSDARG00000086260,+562,70M,3;ENSDARG00000012249,+2169,70M,3;ENSDARG00000077736,-550,70M,3;ENSDARG00000044083,+5175,70M,3;ENSDARG00000035868,-3551,70M,3;ENSDARG00000031745,+1347,70M,3;ENSDARG00000086138,-208,70M,3;ENSDARG00000091321,+1532,70M,3;ENSDARG00000076892,-4089,70M,3;ENSDARG00000076182,-3814,70M,3;ENSDARG00000086015,+696,70M,3;ENSDARG00000077177,+2062,70M,3;ENSDARG00000074796,+2256,70M,3;ENSDARG00000023160,+1198,70M,3;ENSDARG00000038995,+1692,70M,3;ENSDARG00000088340,+768,70M,3;ENSDARG00000030154,-1529,70M,3;ENSDARG00000024452,-1733,70M,3;ENSDARG00000012336,+2456,70M,3;ENSDARG00000029048,-30,70M,3;ENSDARG00000045207,+1213,70M,3;ENSDARG00000074443,+4921,70M,3;ENSDARG00000087508,-1392,70M,3;ENSDARG00000030154,-787,70M,3;ENSDARG00000063677,-1600,70M,3;ENSDARG00000060189,-890,70M,3;ENSDARG00000086735,+1527,70M,3;ENSDARG00000019208,+5331,70M,3;ENSDARG00000063677,-1604,70M,3;ENSDARG00000060189,-894,70M,3;ENSDARG00000086735,+1523,70M,3;ENSDARG00000074506,+7031,70M,3;ENSDARG00000089369,+2571,70M,3;ENSDARG00000030154,-829,70M,3;ENSDARG00000063677,-1584,70M,3;ENSDARG00000010472,+3241,70M,3;ENSDARG00000051836,+2494,70M,3;
+
+J00182:75:HTKJNBBXX:2:1202:24332:24067_TGAGGA_GCAGGT	0	ENSDARG00000019692	719	12	70M	*	0	0	TGTGTGTGTGTGTGTGTGTGTGTGTTTGTGTGTGTGTGTGTTTGTTTGTGTGTGTGTGTGTGTGTGTGTG	---7-7-7-7-7---A7AAJAJAJJ7FF<FFJJJFFJJJFJ-F7A-<<<A<AAFAAFA<F-AAA<FAAFA	XT:A:U	NM:i:1	X0:i:1	X1:i:14	XM:i:1	XO:i:0	XG:i:0	MD:Z:25G44	XA:Z:ENSDARG00000030154,-787,70M,2;ENSDARG00000063677,-1600,70M,2;ENSDARG00000060189,-890,70M,2;ENSDARG00000086735,+1527,70M,2;ENSDARG00000019208,+5331,70M,2;ENSDARG00000063677,-1604,70M,2;ENSDARG00000060189,-894,70M,2;ENSDARG00000086735,+1523,70M,2;ENSDARG00000074506,+7031,70M,2;ENSDARG00000089369,+2571,70M,2;ENSDARG00000030154,-829,70M,2;ENSDARG00000063677,-1584,70M,2;ENSDARG00000010472,+3241,70M,2;ENSDARG00000051836,+2494,70M,2;
+#+END_SRC
+
+#+BEGIN_SRC Mine GCAGGT:TGAGGA
+#+END_SRC
+
+
+***** CGTACG:GACGAA (2) :: Mapped to a different region (repetitive)
+#+BEGIN_SRC Grun CGTACG:GACGAA
+J00182:75:HTKJNBBXX:2:1122:23267:14977_GACGAA_CGTACG	0	ENSDARG00000019692	716	8	70M	*	0	0	GTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTTTGTTTGTGTGTGTATGTGTGTGTAT	A<FFFJJJJAJFJJJFJJJJJJJJJFJ7JJJJJJ<F<F77-F-F-A---<-<-<-7---7---7-7----	XT:A:U	NM:i:2	X0:i:1	X1:i:34	XM:i:2	XO:i:0	XG:i:0	MD:Z:58G9G1	XA:Z:ENSDARG00000063677,-1603,70M,3;ENSDARG00000060189,-893,70M,3;ENSDARG00000086735,+1524,70M,3;ENSDARG00000037084,+8911,70M,3;ENSDARG00000031203,+2277,70M,3;ENSDARG00000077269,+2114,70M,3;ENSDARG00000031203,+2267,70M,3;ENSDARG00000077269,+2104,70M,3;ENSDARG00000014802,-2334,70M,3;ENSDARG00000002508,-1693,70M,3;ENSDARG00000052263,+1423,70M,3;ENSDARG00000038995,+1905,70M,3;ENSDARG00000035683,+2742,70M,3;ENSDARG00000044760,+2891,70M,3;ENSDARG00000069603,+5067,70M,3;ENSDARG00000034424,+2241,70M,3;ENSDARG00000011233,+2948,70M,3;ENSDARG00000014802,-1080,70M,3;ENSDARG00000077677,-1331,70M,3;ENSDARG00000007886,+2911,70M,3;ENSDARG00000030154,-1508,70M,3;ENSDARG00000041346,+1813,70M,3;ENSDARG00000013828,+5766,70M,3;ENSDARG00000088908,-3818,70M,3;ENSDARG00000053987,+1812,70M,3;ENSDARG00000053179,+2607,70M,3;ENSDARG00000089841,+8936,70M,3;ENSDARG00000011233,+2225,70M,3;ENSDARG00000079720,-2259,70M,3;ENSDARG00000063677,-1607,70M,3;ENSDARG00000060189,-897,70M,3;ENSDARG00000086735,+1520,70M,3;ENSDARG00000030154,-852,70M,3;ENSDARG00000077736,-525,70M,3;
+
+J00182:75:HTKJNBBXX:2:2227:19197:16506_GACGAA_CGTACG	0	ENSDARG00000019692	712	10	70M	*	0	0	GTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTTTGTTTGTGTTTGTATGTGTGT	A<FAFJJJJFJFJJJJJJJJJFFAJJFFFJJFJFJJJJJJJJFFAJ-F<----A-<-7-<<A---7-A7-	XT:A:U	NM:i:2	X0:i:1	X1:i:20	XM:i:2	XO:i:0	XG:i:0	MD:Z:58G3G7	XA:Z:ENSDARG00000063677,-1607,70M,3;ENSDARG00000060189,-897,70M,3;ENSDARG00000086735,+1520,70M,3;ENSDARG00000060189,-907,70M,3;ENSDARG00000030154,-862,70M,3;ENSDARG00000086735,+1510,70M,3;ENSDARG00000077736,-535,70M,3;ENSDARG00000095253,-2731,70M,3;ENSDARG00000074204,+860,70M,3;ENSDARG00000037084,+8907,70M,3;ENSDARG00000006982,+1226,70M,3;ENSDARG00000031203,+2273,70M,3;ENSDARG00000077269,+2110,70M,3;ENSDARG00000075567,-5094,70M,3;ENSDARG00000063677,-1611,70M,3;ENSDARG00000060189,-901,70M,3;ENSDARG00000030154,-856,70M,3;ENSDARG00000086735,+1516,70M,3;ENSDARG00000077736,-529,70M,3;ENSDARG00000087906,-3173,70M,3;
+#+END_SRC
+
+#+BEGIN_SRC Mine CGTACG:GACGAA
+#+END_SRC
+
+
+***** ATCACG:GTACCA (1) :: Mapped to a different region (repetitive)
+#+BEGIN_SRC Grun ATCACG:GTACCA
+J00182:75:HTKJNBBXX:2:1208:32339:5270_GTACCA_ATCACG	0	ENSDARG00000019692	712	14	70M	*	0	0	GTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTTTGTTTGTGTGTGTGTGTGTGT	A<--7<-F-FAA-<7FFAJAAFF--<<-<--FAA-AAJ-F-A-F7A-F-A<7--7A7A-A--777A----	XT:A:U	NM:i:0	X0:i:1	X1:i:8	XM:i:0	XO:i:0	XG:i:0	MD:Z:70	XA:Z:ENSDARG00000063677,-1607,70M,1;ENSDARG00000060189,-897,70M,1;ENSDARG00000086735,+1520,70M,1;ENSDARG00000063677,-1611,70M,1;ENSDARG00000060189,-901,70M,1;ENSDARG00000030154,-856,70M,1;ENSDARG00000086735,+1516,70M,1;ENSDARG00000077736,-529,70M,1;
+#+END_SRC
+
+#+BEGIN_SRC Mine ATCACG:GTACCA
+#+END_SRC
+
+
+*** Verdict - My matrix has more reads in general, and less ambiguous mappings.
+**** TODO Quantify this as a rough percentage.
+
+* Does my matrix agree with FeatureCounts counts?
+
+#+BEGIN_SRC 
+                                 A    A    C    T    A    A    T    G    G    A    A    T    G    A    A
+                                 T    G    T    G    C    C    G    A    T    C    A    G    G    G    G
+                                 G    T    A    A    T    C    C    C    G    C    G    G    T    C    A
+                                 T    G    G    G    C    A    A    G    A    A    C    T    A    T    C
+                                 C    T    G    G    T    G    A    A    C    T    C    G    A    T    A
+                                 G    C    A    A    G    A    C    A    A    G    A    A    C    C    G
+                 GENEID    RBAR
+chr16:20392245-20433166  TCCAAG  4    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+chr16:20392245-20433166  TGTCTT  0    1    0    1    0    0    0    0    0    0    0    0    0    0    0
+chr16:20392245-20433166  ATTCTG  0    0    1    0    0    0    0    0    0    0    0    0    0    0    0
+chr16:20392245-20433166  CTGACG  0    0    0    5    0    0    0    0    0    0    0    0    0    0    0
+chr16:20392245-20433166  GTGACG  0    0    0    0    1    0    0    0    0    0    0    0    0    0    0
+chr16:20392245-20433166  TGTGTA  0    0    0    2    0    0    0    0    0    0    0    0    0    0    0
+chr16:20392245-20433166  GGGCGT  0    0    0    0    0    8    0    0    0    0    0    0    0    0    0
+chr16:20392245-20433166  ACTGTT  0    0    0    0    0    0    1    0    0    0    0    0    0    0    0
+chr16:20392245-20433166  CATTGA  0    0    0    0    0    0    0    4    0    0    0    0    0    0    0
+chr16:20392245-20433166  AAGGCC  0    0    0    1    0    0    0    0    0    0    0    0    0    0    0
+chr16:20392245-20433166  TCCTTT  0    0    0    0    0    0    0    0    2    0    0    0    0    0    0
+chr16:20392245-20433166  CACGTG  0    0    0    0    0    0    0    0    0    1    0    0    0    0    0
+chr16:20392245-20433166  GGGGTT  0    0    0    0    0    6    0    0    0    0    0    0    0    0    0
+chr16:20392245-20433166  TGAGGT  0    0    0    0    0    0    0    0    0    0    2    0    0    0    0
+chr16:20392245-20433166  AGAACT  0    0   12    0    0    0    0    0    0    0    0    0    0    0    0
+chr16:20392245-20433166  GAGGCG  0    0    0   10    0    0    0    0    0    0    0    0    0    0    0
+chr16:20392245-20433166  CAATGT  0    0    0    0    0    0    0    0    0    0    0    6    0    0    0
+chr16:20392245-20433166  GCCGAG  1    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+chr16:20392245-20433166  CGGCGT  0    0    0    0    0    0    0    0    0    0    0    0    1    0    0
+chr16:20392245-20433166  TTAAGG  0    0    0    0    0    0    0    1    0    0    0    0    0    0    0
+chr16:20392245-20433166  GCGCAA  0    0    0    0    0    0    0    2    0    0    0    0    0    0    0
+chr16:20392245-20433166  CCGTCA  0    0    0    0    2    0    0    0    0    0    0    0    0    0    0
+chr16:20392245-20433166  GGTATT  0    0    0    5    0    0    0    0    0    0    0    0    0    0    0
+chr16:20392245-20433166  GGGTTC  0    0    0    0    0    0    0    0    0    0    0    6    0    0    0
+chr16:20392245-20433166  GGAAGA  0    0    0    0    0    2    0    0    0    0    0    0    0    0    0
+chr16:20392245-20433166  GTCCCA  0    0    0    0    0    0    0    0    0    0    0    0    4    0    0
+chr16:20392245-20433166  AGGTTG  0    0    0    0    0    0    0    1    0    0    0    0    0    0    0
+chr16:20392245-20433166  AAGCAG  0    0    0    0    0    0    0    0    0    0    0    0    0    1    0
+chr16:20392245-20433166  GCTAGA  0    0    0    0    3    0    0    0    0    0    0    0    0    0    0
+chr16:20392245-20433166  ATCGGG  0    0    0    0    0    0    0    0    0    0    0    0    0    0    7
+chr16:20392245-20433166  CTCGGC  0    0    0    0    0    7    0    0    0    0    0    0    0    0    0
+
+                                 2    1    2    6    3    4    1    4    1    1    1    2    2    1    1
+                                      3    5   11   14   18   19   23   24   25   26   28   30   31   32
+#+END_SRC
+
+So I count 32 for this gene, but feature counts gets 39 using default settings (although the count distribution across cells is not yet known)
+** TODO Understand the feature counts stage, and whether umi_tools dedup needs to be run first before umi_tools count (or implicit?)
