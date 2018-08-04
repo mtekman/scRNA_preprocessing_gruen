@@ -46,13 +46,13 @@ ggplot(joined, aes(x=Mine,y=Grun)) + geom_point(alpha=0.2) + xlim(0,50) + ylim(0
 #+RESULTS:
 [[file:plot1.png]]
 
-*** Why the high counts for Grün and zero for me?
+* Why the high counts for Grün and zero for me?
 
 I need to find the specific readnames of Grün's matrix which means modifying the GeneralUtils.py on the biu cluster.
 
-**** DONE Update GeneralUtils to give a detailed matrix of readnames.
-**** Generate scripts to:
-***** Generate TSV files:
+** DONE Update GeneralUtils to give a detailed matrix of readnames.
+** Generate scripts to:
+*** Generate TSV files:
 - [X] Grun
 
 Prepend "P1_B1" to barcodes in this file, and remove all non-numeric values → tsv
@@ -107,7 +107,7 @@ write.table(tsub, file="/dev/stdout", quote=F, sep='\t', col.names=NA)
 [[file:inputs/mine.tsv]]
 
 
-***** DONE Compare two TSV matrices and generate a joined table of counts
+*** DONE Compare two TSV matrices and generate a joined table of counts
 
 #+BEGIN_SRC bash
 mkdir -p 1_merged
@@ -138,7 +138,7 @@ saveRDS(joined, '1_merged/joined_mine_grun.rds')
 : 5 ENSDARG00000000002 P1_B1_ACAGAC    0    0
 : 6 ENSDARG00000000002 P1_B1_ACAGGA    0    0
 
-****** Find the most significant Gene/Cell combos where Grün is high and mine are low
+**** Find the most significant Gene/Cell combos where Grün is high and mine are low
 
 #+BEGIN_SRC R :results output
   joined <- readRDS('1_merged/joined_mine_grun.rds')
@@ -174,6 +174,337 @@ saveRDS(joined, '1_merged/joined_mine_grun.rds')
 644160 ENSDARG00000045639 P1_B1_TTGTGC   41    8
 #+end_example
 
-***** TODO Where counts signficantly differ, extract umis+readnames from a given cell/gene
+*** TODO Where counts signficantly differ, extract umis+readnames from a given cell/gene
 
-***** TODO For a list of readnames, pull them from two different SAM/BAM files and compare them
+#+BEGIN_SRC bash
+mkdir -p 2_search_detailed
+#+END_SRC
+
+#+RESULTS:
+
+ 1. First, change the super detailed matrix into a tsv with parseable headers
+
+#+BEGIN_SRC python :results output :file 2_search_detailed/grun.detailed.tsv
+def header2barcode(header):
+    return("".join(
+        ["".join(y) for y in list(zip(*[list(x) for x in header.splitlines()]))]
+    ).split())
+
+prepend = "P1_B1_"
+
+with open('./inputs/logs/output.all.matrix_detailed_super','r') as mat:
+    found_geneID = False
+    headers = ""
+    dlen = 0
+    
+    for line in mat:
+        if not(found_geneID):
+            if line.startswith("%30s" % "GENEID"):
+                found_geneID = True
+                print('\t' + '\t'.join([(prepend + x) for x in header2barcode(headers)]))
+            else:
+                headers += line
+            continue
+
+        tokes = line.split()
+        gname = tokes[0]
+        cdata = ["NA" if x=="-" else x for x in tokes[1:]]
+
+        if dlen == 0:
+            dlen = len(cdata)
+        elif dlen != len(cdata):
+            print("Dlen mismatch", dlen, len(cdata), gname, file=sys.stderr)
+            exit(-1)
+
+        print(gname + '\t' + '\t'.join(cdata))
+
+#+END_SRC
+
+#+RESULTS:
+[[file:2_search_detailed/grun.detailed.tsv]]
+
+
+#+BEGIN_SRC R :results value :file 2_search_detailed/top.ENSDARG00000045639.P1_B1_ACGTTG.txt
+tab <- read.table('2_search_detailed/grun.detailed.tsv', row.names = 1, header=T, stringsAsFactors=FALSE)
+
+umi.reads <- unlist(strsplit(tab["ENSDARG00000045639","P1_B1_ACGTTG"], "\\|"))
+
+tab2 <- c()
+res <- lapply(umi.reads, FUN=function(x){
+   umi <- sub("([ACGT]+)_.*","\\1", x)
+   replacer <- paste(umi, "_", sep="")
+   reads <- gsub(replacer,"", x)
+   tab2 <<- rbind(tab2, c(umi,reads))
+})
+
+tab2
+#+END_SRC
+
+#+RESULTS:
+[[file:2_search_detailed/top.ENSDARG00000045639.P1_B1_ACGTTG.txt]]
+
+*** For a list of readnames, pull them from two different SAM/BAM files and compare them
+    
+First flatten our data from umi1 → read1;read2, to umi1→read1, umi1→read2
+
+#+BEGIN_SRC R :results output tabular
+  options(stringsAsFactors = FALSE)
+
+  wanted <- read.table('2_search_detailed/top.ENSDARG00000045639.P1_B1_ACGTTG.txt', col.names=c("umis","reads"))
+
+  crows <- c()
+  res <- sapply(1:nrow(wanted), FUN=function(x){
+      umis=wanted$umis[[x]]
+      read=unlist(strsplit(wanted$reads[[x]], ";"))
+      crows <<- rbind(crows, cbind(umis, read))
+  })
+  wanted <- data.frame(crows)
+  saveRDS(wanted, file="2_search_detailed/top.ENSDARG00000045639.P1_B1_ACGTTG.rds")
+  wanted
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+      umis                                   read
+1   ACGGTG J00182:75:HTKJNBBXX:2:1217:12114:40280
+2   AGACTG J00182:75:HTKJNBBXX:2:2125:13047:12603
+3   AGGTCT J00182:75:HTKJNBBXX:2:1128:17777:39119
+4   AGGTCT J00182:75:HTKJNBBXX:2:2103:19674:17544
+5   AGGTCT J00182:75:HTKJNBBXX:2:2124:11332:40895
+6   AGAAGG J00182:75:HTKJNBBXX:2:1221:15108:48772
+7   AGAAGG J00182:75:HTKJNBBXX:2:1125:10439:47823
+8   CATTCA  J00182:75:HTKJNBBXX:2:1212:13900:3459
+9   TTTGTT J00182:75:HTKJNBBXX:2:1115:24931:46240
+10  TTTGTT J00182:75:HTKJNBBXX:2:2202:28605:34319
+11  GAAGTA J00182:75:HTKJNBBXX:2:1101:28118:14097
+12  GAAGTA  J00182:75:HTKJNBBXX:2:1212:13464:8049
+13  CGGAGG  J00182:75:HTKJNBBXX:2:1101:18355:2668
+14  CGGAGG J00182:75:HTKJNBBXX:2:1219:17634:37079
+15  CGGAGG J00182:75:HTKJNBBXX:2:2107:12094:28323
+16  CGGAGG J00182:75:HTKJNBBXX:2:2119:22201:11196
+17  CGGAGG J00182:75:HTKJNBBXX:2:2126:10805:46205
+18  CGGAGG  J00182:75:HTKJNBBXX:2:2215:17929:7767
+19  CGGAGG J00182:75:HTKJNBBXX:2:2215:10724:26617
+20  CATCAT J00182:75:HTKJNBBXX:2:1111:30655:48772
+21  CATCAT J00182:75:HTKJNBBXX:2:1119:28686:43357
+22  CATCAT J00182:75:HTKJNBBXX:2:1120:25276:27180
+23  CATCAT  J00182:75:HTKJNBBXX:2:1213:22323:2228
+24  CATCAT  J00182:75:HTKJNBBXX:2:2124:3995:17526
+25  CGGTGC J00182:75:HTKJNBBXX:2:2114:16741:36306
+26  TGGGGG J00182:75:HTKJNBBXX:2:2223:22678:14308
+27  GTAGTA J00182:75:HTKJNBBXX:2:1215:11261:11442
+28  TGTAGG J00182:75:HTKJNBBXX:2:1223:22577:39981
+29  TGTAGG J00182:75:HTKJNBBXX:2:2219:17401:41809
+30  TAGGGC  J00182:75:HTKJNBBXX:2:1204:9485:25210
+31  TAGGGC J00182:75:HTKJNBBXX:2:2117:19278:25544
+32  TAGGGC  J00182:75:HTKJNBBXX:2:2126:8268:12093
+33  TAGGGC  J00182:75:HTKJNBBXX:2:2127:2899:10633
+34  AACCAG  J00182:75:HTKJNBBXX:2:1112:9790:36921
+35  AACCAG  J00182:75:HTKJNBBXX:2:1119:19745:8910
+36  AACCAG J00182:75:HTKJNBBXX:2:1201:18497:26934
+37  AACCAG   J00182:75:HTKJNBBXX:2:1208:5528:6255
+38  AACCAG  J00182:75:HTKJNBBXX:2:1215:4543:26072
+39  AACCAG J00182:75:HTKJNBBXX:2:2107:20517:12532
+40  AACCAG  J00182:75:HTKJNBBXX:2:2108:4533:29325
+41  AACCAG  J00182:75:HTKJNBBXX:2:2202:1925:22801
+42  AGCACT J00182:75:HTKJNBBXX:2:1125:30553:19478
+43  AGCACT J00182:75:HTKJNBBXX:2:1128:17980:32894
+44  AGCACT J00182:75:HTKJNBBXX:2:1128:29143:39928
+45  AGCACT  J00182:75:HTKJNBBXX:2:1202:3772:39154
+46  AGCACT  J00182:75:HTKJNBBXX:2:1224:7821:14695
+47  AGCACT J00182:75:HTKJNBBXX:2:2128:18913:35778
+48  AGCACT J00182:75:HTKJNBBXX:2:2209:19136:33000
+49  AGACTC  J00182:75:HTKJNBBXX:2:1217:4929:33070
+50  GGGGGC J00182:75:HTKJNBBXX:2:1101:24261:29782
+51  GGGGGC J00182:75:HTKJNBBXX:2:1112:12012:30398
+52  ATGGAT J00182:75:HTKJNBBXX:2:2113:19735:16981
+53  AGAAGT  J00182:75:HTKJNBBXX:2:1209:18162:8734
+54  TACGTG  J00182:75:HTKJNBBXX:2:1126:3701:24226
+55  TACGTG  J00182:75:HTKJNBBXX:2:1207:30137:6027
+56  TACGTG  J00182:75:HTKJNBBXX:2:2105:2980:36270
+57  TACGTG J00182:75:HTKJNBBXX:2:2118:14681:17544
+58  TACGTG  J00182:75:HTKJNBBXX:2:2202:31050:4444
+59  TACGTG J00182:75:HTKJNBBXX:2:2227:12479:10598
+60  TACGTG J00182:75:HTKJNBBXX:2:2228:24302:47471
+61  TTGTCG  J00182:75:HTKJNBBXX:2:2118:5294:37009
+62  TTGTCG J00182:75:HTKJNBBXX:2:2209:15463:31523
+63  TTGTCG J00182:75:HTKJNBBXX:2:2209:15077:34301
+64  TTGTCG  J00182:75:HTKJNBBXX:2:2220:9557:10950
+65  GGACGC   J00182:75:HTKJNBBXX:2:1114:7841:7029
+66  GGACGC   J00182:75:HTKJNBBXX:2:2118:8044:2598
+67  GGACGC J00182:75:HTKJNBBXX:2:1223:12378:17667
+68  GGACGC J00182:75:HTKJNBBXX:2:2226:19827:17245
+69  GGGAGG  J00182:75:HTKJNBBXX:2:1111:5091:40350
+70  GGGAGG J00182:75:HTKJNBBXX:2:2221:13321:30239
+71  CAGTAA  J00182:75:HTKJNBBXX:2:2228:7608:29413
+72  CTTTGA J00182:75:HTKJNBBXX:2:1110:27448:26758
+73  CTTTGA  J00182:75:HTKJNBBXX:2:1222:8471:42231
+74  CTTTGA   J00182:75:HTKJNBBXX:2:1224:6400:2985
+75  CTTTGA J00182:75:HTKJNBBXX:2:2110:26372:30696
+76  CTTTGA J00182:75:HTKJNBBXX:2:2211:19969:42319
+77  AGAGAT J00182:75:HTKJNBBXX:2:2104:19806:43093
+78  AGAGAT  J00182:75:HTKJNBBXX:2:2116:27306:7838
+79  GTCATC J00182:75:HTKJNBBXX:2:1105:21542:32138
+80  GTCATC J00182:75:HTKJNBBXX:2:1115:11251:23557
+81  GTCATC  J00182:75:HTKJNBBXX:2:1115:6126:33000
+82  GTCATC   J00182:75:HTKJNBBXX:2:1119:6542:3090
+83  GTCATC J00182:75:HTKJNBBXX:2:2105:23348:18142
+84  GTCATC  J00182:75:HTKJNBBXX:2:2115:11434:2141
+85  GTCATC J00182:75:HTKJNBBXX:2:2118:28818:37677
+86  GTCATC J00182:75:HTKJNBBXX:2:2121:17381:23733
+87  GTCATC   J00182:75:HTKJNBBXX:2:2212:8237:3354
+88  GTCATC  J00182:75:HTKJNBBXX:2:2215:4401:24595
+89  GTCATC J00182:75:HTKJNBBXX:2:2216:20364:14555
+90  GTCATC J00182:75:HTKJNBBXX:2:2216:19796:21447
+91  GTCATC J00182:75:HTKJNBBXX:2:2226:20811:39945
+92  GTCATC J00182:75:HTKJNBBXX:2:1207:25723:21940
+93  CTATCA J00182:75:HTKJNBBXX:2:2117:27762:28956
+94  GTGTTG  J00182:75:HTKJNBBXX:2:2216:25408:7117
+95  GCGCTA J00182:75:HTKJNBBXX:2:1109:12865:38029
+96  GCGCTA J00182:75:HTKJNBBXX:2:1109:13129:39225
+97  GCGCTA J00182:75:HTKJNBBXX:2:1123:20476:47278
+98  GCGCTA J00182:75:HTKJNBBXX:2:1124:19319:20234
+99  GCGCTA  J00182:75:HTKJNBBXX:2:1201:3650:42319
+100 GCGCTA  J00182:75:HTKJNBBXX:2:2219:7984:28727
+101 GCGCTA J00182:75:HTKJNBBXX:2:2225:26281:31136
+102 TGACCT J00182:75:HTKJNBBXX:2:2109:26068:12163
+103 TGTGAC J00182:75:HTKJNBBXX:2:2107:11282:11161
+104 TGCTTA  J00182:75:HTKJNBBXX:2:1116:3407:24349
+105 TGCTTA J00182:75:HTKJNBBXX:2:1215:10105:48931
+106 TGCTTA J00182:75:HTKJNBBXX:2:2110:26210:13816
+107 GGGGTA J00182:75:HTKJNBBXX:2:1207:17046:34266
+108 GGGGTA J00182:75:HTKJNBBXX:2:1228:22942:30626
+109 GGGGTA  J00182:75:HTKJNBBXX:2:2101:17036:9244
+110 CATCGT J00182:75:HTKJNBBXX:2:1125:27032:17737
+111 CATCGT J00182:75:HTKJNBBXX:2:1210:20050:28885
+112 ACGTTT J00182:75:HTKJNBBXX:2:2119:20517:43867
+113 ACTCGC J00182:75:HTKJNBBXX:2:1122:20334:13658
+114 TTTTAC J00182:75:HTKJNBBXX:2:1102:23551:18880
+115 TTTTAC J00182:75:HTKJNBBXX:2:1108:14113:47014
+116 TTTTAC J00182:75:HTKJNBBXX:2:1114:28838:13588
+117 TTTTAC J00182:75:HTKJNBBXX:2:1216:29924:30099
+118 TTTTAC J00182:75:HTKJNBBXX:2:1223:28666:20146
+119 TTTTAC J00182:75:HTKJNBBXX:2:2107:19025:16629
+120 TTTTAC  J00182:75:HTKJNBBXX:2:2111:5700:19671
+121 TTTTAC J00182:75:HTKJNBBXX:2:2117:16447:14449
+122 TTTTAC J00182:75:HTKJNBBXX:2:2221:24129:13728
+123 TTTTAC  J00182:75:HTKJNBBXX:2:2228:15108:1930
+124 TTTTAC  J00182:75:HTKJNBBXX:2:2227:23835:3407
+125 GCAGGC  J00182:75:HTKJNBBXX:2:2103:9831:41598
+126 GCAGGC  J00182:75:HTKJNBBXX:2:2122:10916:6132
+127 AGGGTC J00182:75:HTKJNBBXX:2:2113:15990:11759
+128 AGGGTC J00182:75:HTKJNBBXX:2:2112:12713:47120
+129 AGGGTC J00182:75:HTKJNBBXX:2:2115:25926:46698
+130 TCCATA J00182:75:HTKJNBBXX:2:1227:25134:37167
+131 TCCATA J00182:75:HTKJNBBXX:2:2104:13037:44447
+132 TCCATA   J00182:75:HTKJNBBXX:2:2209:6086:4127
+133 GCGCCA  J00182:75:HTKJNBBXX:2:1117:13951:9772
+134 GCGCCA   J00182:75:HTKJNBBXX:2:1208:7090:6607
+135 GCGCCA  J00182:75:HTKJNBBXX:2:2123:30289:5763
+136 GCGCCA J00182:75:HTKJNBBXX:2:2204:11698:41598
+137 GTAGTT J00182:75:HTKJNBBXX:2:1112:29975:12005
+138 GTAGTT  J00182:75:HTKJNBBXX:2:1210:13119:7802
+139 GTAGTT  J00182:75:HTKJNBBXX:2:1210:13342:7873
+140 GTAGTT  J00182:75:HTKJNBBXX:2:2117:6847:21131
+#+end_example
+
+Now perform the actual search and convert to our desired output
+
+- [ ] Grun
+
+#+BEGIN_SRC R :results output
+  require(Rsamtools)
+  wanted <- readRDS("2_search_detailed/top.ENSDARG00000045639.P1_B1_ACGTTG.rds")
+  bam <- scanBam(
+      'BAM_inputs/grun.wd1.bam',
+      param=ScanBamParam(
+          what=c("qname","rname", "strand", "pos", "flag"),
+          tag=c("NM", "XA")
+      )
+  )[[1]]
+
+  filt <- bam$qname %in% wanted$read
+
+  bam.grun.filtered <- data.frame(
+      qname=bam$qname[filt],
+      rname=bam$rname[filt],
+      strand=bam$strand[filt],
+      pos = bam$pos[filt],
+      flag = bam$flag[filt],
+      NM = bam$tag$NM[filt],
+      XA = bam$tag$XA[filt]
+  )
+
+  saveRDS(bam.grun.filtered, "2_search_detailed/top.ENSDARG00000045639.P1_B1_ACGTTG.GRUNBAM.rds")
+  head(bam.grun.filtered)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+                                   qname              rname strand  pos flag NM
+1 J00182:75:HTKJNBBXX:2:1223:22577:39981 ENSDARG00000045639      + 2949    0  1
+2 J00182:75:HTKJNBBXX:2:1207:17046:34266 ENSDARG00000045639      + 2911    0  0
+3 J00182:75:HTKJNBBXX:2:1228:22942:30626 ENSDARG00000045639      + 2917    0  1
+4  J00182:75:HTKJNBBXX:2:2101:17036:9244 ENSDARG00000045639      + 2910    0  1
+5  J00182:75:HTKJNBBXX:2:1204:9485:25210 ENSDARG00000045639      + 3414    0  0
+6 J00182:75:HTKJNBBXX:2:2117:19278:25544 ENSDARG00000045639      + 3421    0  0
+#+end_example
+
+- [ ] Mine
+
+The workflow I was looking at was "CelSeq2: New Super Workflow #Run8" where I downloaded the BAM from 55:featureCounts on collection for WD_DP_P1_1.fastq. 
+
+#+BEGIN_SRC R :results output
+  require(Rsamtools)
+  wanted <- readRDS("2_search_detailed/top.ENSDARG00000045639.P1_B1_ACGTTG.rds")
+  bam <- scanBam(
+      'BAM_inputs/mine.featcount.wd1.bam',
+      param=ScanBamParam(
+          what=c("qname","rname", "strand", "pos", "flag"),
+          tag=c("NH", "HI", "nM", "XS", "XN", "XT")
+      )
+  )[[1]]
+
+  ## The umis and barcodes are in the header, so I need to strip these out
+  bam$aqname <- sub("(.*)_([A-Z]+)_([A-Z]+)", "\\1", bam$qname)
+  bam$barcode <- sub("(.*)_([A-Z]+)_([A-Z]+)", "\\2", bam$qname)
+  bam$umi <- sub("(.*)_([A-Z]+)_([A-Z]+)", "\\3", bam$qname)
+
+  filt <- bam$aqname %in% wanted$read
+
+  bam.mine.filtered <- data.frame(
+      qname=bam$aqname[filt],
+      rname=bam$rname[filt],
+      barcode=bam$barcode[filt],
+      umi=bam$umi[filt],
+      strand=bam$strand[filt],
+      pos = bam$pos[filt],
+      flag = bam$flag[filt],
+      NH = bam$tag$NH[filt],
+      HI = bam$tag$HI[filt],
+      NM = bam$tag$nM[filt],
+      XS = bam$tag$XS[filt],
+      XN = bam$tag$XN[filt],
+      XT = bam$tag$XT[filt]
+  )
+
+  saveRDS(bam.mine.filtered, "2_search_detailed/top.ENSDARG00000045639.P1_B1_ACGTTG.MINEBAM.rds")
+  head(bam.mine.filtered)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+                                   qname rname barcode    umi strand      pos flag NH HI NM       XS XN                 XT
+1  J00182:75:HTKJNBBXX:2:1222:8471:42231  chr8  ACGTTG CTTTGA      + 16018636    0  1  1  0 Assigned  1 ENSDARG00000045639
+2   J00182:75:HTKJNBBXX:2:1224:6400:2985  chr8  ACGTTG CTTTGA      + 16018637    0  1  1  1 Assigned  1 ENSDARG00000045639
+3 J00182:75:HTKJNBBXX:2:1110:27448:26758  chr8  ACGTTG CTTTGA      + 16040800    0  1  1  0 Assigned  1 ENSDARG00000045639
+4 J00182:75:HTKJNBBXX:2:2110:26372:30696  chr8  ACGTTG CTTTGA      + 16040800    0  1  1  0 Assigned  1 ENSDARG00000045639
+5 J00182:75:HTKJNBBXX:2:2211:19969:42319  chr8  ACGTTG CTTTGA      + 16040800    0  1  1  0 Assigned  1 ENSDARG00000045639
+6 J00182:75:HTKJNBBXX:2:2227:12479:10598  chr8  ACGTTG TACGTG      + 16076303    0  1  1  0 Assigned  1 ENSDARG00000045639
+#+end_example
+
+*** Now let us perform a cautious merge and see why my 140 reads for ACGTTG are not being counted
+
+#+BEGIN_SRC R 
+
+#+END_SRC
