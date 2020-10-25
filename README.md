@@ -1,5 +1,5 @@
 ### This repo has migrated to GitLab
-https://gitlab.com/mtekman/scRNA_preprocessing_gruen
+https://gitlab.com/mtekman/scRNA_2018_preprocessing_gruen
 ###### (The copy here is archived. Please see the above link for the latest developments)
 
 ********
